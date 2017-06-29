@@ -1354,7 +1354,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
         catch (Exception $e)
         {
-            echo $e->getMessage();
+            $this->getLogger()->info($e->getMessage());
             die();
         }
         $this->create_db();
