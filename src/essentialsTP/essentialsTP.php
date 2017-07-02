@@ -413,11 +413,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 $this->result = $this->prepare->execute();
                 $sql          = $this->fetchall();
                 if( count($sql) > 0 ) {
-                    return true;
-                } else {
-                    $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_warp_listed"));
-                    $event->setCancelled(true);
-                    return true;
+                    $player->sendMessage(TextFormat::GREEN.$this->config->get("Lang_warp_set") . " " . $this->warp_loc);
                 }
                 return true;
             }
