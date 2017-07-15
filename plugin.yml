@@ -1,7 +1,7 @@
 name: essentialsTP
 main: essentialsTP\essentialsTP
 version: 1.1.1-dev2
-api: [3.0.0-ALPHA5, 3.0.0-ALPHA6]
+api: [3.0.0-ALPHA7]
 commands:
  home:
   description: Teleports you home /home will list homes /home <homename> will teleport you.

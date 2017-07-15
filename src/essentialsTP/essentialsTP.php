@@ -502,7 +502,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $this->update_cooldown( $player->getName(), 0, 'spawn');
     }
 
-    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
+    public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
         switch($cmd->getName()){
             case 'motd':
                 $sender->sendMessage(TextFormat::GOLD.'[MOTD] '.TextFormat::WHITE.$this->config->get("MOTD"));
