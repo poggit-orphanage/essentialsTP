@@ -1081,7 +1081,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 if ($sender instanceof Player)
                 {
-                    if($this->death_loc[$sender->getName()] instanceof Position){
+                    if(isset($this->death_loc[$sender->getName()]) && $this->death_loc[$sender->getName()] instanceof Position){
                         $sender->teleport($this->death_loc[$sender->getName()]);
                         $sender->sendMessage($this->config->get("Lang_teleport_death"));
                         unset($this->death_loc[$sender->getName()]);
