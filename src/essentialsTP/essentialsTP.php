@@ -440,7 +440,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }
         }
     }
-        public function onPlayerRespawn(PlayerRespawnEvent $event){
+
+    public function onPlayerRespawn(PlayerRespawnEvent $event){
         $player = $event->getPlayer();
         if ( isset($this->death_loc[$player->getName()]) ){
             $this->username = $player->getName();
