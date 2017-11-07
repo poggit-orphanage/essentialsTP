@@ -1355,10 +1355,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 $this->db2 = new \SQLite3($this->getDataFolder().$this->config->get("sqlite-dbname").'.db', SQLITE3_OPEN_READWRITE);
             }
         }
-        catch (Exception $e)
+        catch (\Throwable $e)
         {
-            $this->getLogger()->info($e->getMessage());
-            die();
+            $this->getLogger()->critical($e->getMessage());
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
         }
         $this->create_db();
         $this->getLogger()->info(TextFormat::GREEN."[INFO] loading [".TextFormat::GOLD."config.yml".TextFormat::GREEN."]....");
@@ -1366,14 +1367,12 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $this->getLogger()->info(TextFormat::GREEN."[INFO] loading [".TextFormat::GOLD."config.yml".TextFormat::GREEN."] DONE");
         $this->getLogger()->info(TextFormat::GREEN."essentialsTP+ loaded!");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-
     }
 
     public function onDisable(){
-        $this->prepare->close();
+        if($this->prepare){
+            $this->prepare->close();
+        }
         $this->getLogger()->info("essentialsTP+ Disabled");
     }
-
-
-
 }
