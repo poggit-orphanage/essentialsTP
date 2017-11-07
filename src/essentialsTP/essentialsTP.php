@@ -456,9 +456,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 {
                     if ($sql['world'] == $curr_world->getName())
                     {
-                        $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
-
-                        $player->teleport($pos);
+                        $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                         $this->update_cooldown($this->username, time(), 'home');
                         $player->sendMessage($this->config->get("Lang_teleport_home"));
                         return true;
@@ -478,8 +476,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         {
                             if ($sql['world'] == $curr_world->getName())
                             {
-                                $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
-                                $player->teleport($pos);
+                                $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                                 $this->update_cooldown($player->getName(), time(), 'spawn');
                                 $player->sendMessage($this->config->get("Lang_teleport_spawn"));
                                 return true;
@@ -490,7 +487,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     else
                     {
                         $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                        $player->teleport($player->getLevel()->getSpawnLocation());
+                        $event->setRespawnPosition($player->getLevel()->getSpawnLocation());
                         $this->update_cooldown($player->getName(), time(), 'spawn');
                         $player->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                         return true;
