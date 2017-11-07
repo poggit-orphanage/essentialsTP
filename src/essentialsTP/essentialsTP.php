@@ -45,7 +45,6 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     public $home_loc;
     /** @var string */
     public $warp_loc;
-    public $params;
     /** @var Position[] */
     public $death_loc;
     /** @var Config */
@@ -60,7 +59,6 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     public $result;
     /** @var \SQLite3Stmt */
     public $prepare;
-    public $sign;
 
     public function fetchall(){
         $row = array();
