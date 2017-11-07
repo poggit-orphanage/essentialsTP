@@ -35,18 +35,30 @@ use pocketmine\event\block\SignChangeEvent;
 
 
 class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
+    /** @var \SQLite3 */
     private $db2;
+    /** @var string */
     public $username;
+    /** @var string */
     public $world;
+    /** @var string */
     public $home_loc;
+    /** @var string */
     public $warp_loc;
     public $params;
+    /** @var Position[] */
     public $death_loc;
+    /** @var Config */
     public $config;
+    /** @var int[] */
     public $player_cords;
+    /** @var string */
     public $tp_sender;
+    /** @var string */
     public $tp_reciver;
+    /** @var \SQLite3Result */
     public $result;
+    /** @var \SQLite3Stmt */
     public $prepare;
     public $sign;
 
