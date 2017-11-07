@@ -2,6 +2,7 @@ name: essentialsTP
 main: essentialsTP\essentialsTP
 version: 1.2.0-2
 api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9]
+extensions: [sqlite3]
 commands:
  home:
   description: Teleports you home /home will list homes /home <homename> will teleport you.
