@@ -111,7 +111,7 @@ permissions:
      essentialstp.command.home:
       description: "Allows player to use the home command"
       default: true
-     essentialstp.command.bedsetshome:
+     essentialstp.command.bedsethome:
       description: "Allows player to set home with there bed"
       default: true
      essentialstp.command.sign.warp:
