@@ -9,7 +9,7 @@ commands:
   usage: "/home or /home <homename>"
   permission: essentialstp.command.home
  sethome:
-  description: Sets your home use names for multiple homes.
+  description: Sets your home, use names for multiple homes.
   usage: "/sethome <homename>"
   permission: essentialstp.command.sethome
  delhome:
@@ -21,7 +21,7 @@ commands:
   usage: "/back"
   permission: essentialstp.command.back
  wild:
-  description: Teleport to a radom location in the world.
+  description: Teleport to a random location in the world.
   usage: "/wild"
   permission: essentialstp.command.wild
  setspawn:
@@ -57,16 +57,16 @@ commands:
   usage: "/tpaccept"
   permission: essentialstp.command.tpaccept
  tpdeny:
-   description: decline all active teleport request.
+   description: decline all active teleport requests.
    usage: "/tpdeny"
    permission: essentialstp.command.tpdeny
 permissions:
  essentialstp.*:
   default: op
-  description: "Will allow all essentialsTP commands"
+  description: "Allows all essentialsTP commands"
   children:
    essentialstp.command.*:
-    description: "Will allow you to use commands"
+    description: "Allows player to use commands"
     default: op
     children:
      essentialstp.command.tpdeny:
@@ -100,7 +100,7 @@ permissions:
       description: "Allows player to teleport to a random location in world"
       default: true
      essentialstp.command.back:
-      description: "Allows player go back to there last death location"
+      description: "Allows player go back to their last death location"
       default: true
      essentialstp.command.delhome:
       description: "Allows player to delete their homes"
