@@ -103,16 +103,16 @@ permissions:
       description: "Allows player go back to there last death location"
       default: true
      essentialstp.command.delhome:
-      description: "Allows player to delete thier homes"
+      description: "Allows player to delete their homes"
       default: true
      essentialstp.command.sethome:
-      description: "Allows player to set there homes"
+      description: "Allows player to set their homes"
       default: true
      essentialstp.command.home:
       description: "Allows player to use the home command"
       default: true
      essentialstp.command.bedsethome:
-      description: "Allows player to set home with there bed"
+      description: "Allows player to set home with their bed"
       default: true
      essentialstp.command.sign.warp:
       description: "Allows player to use warp signs"
