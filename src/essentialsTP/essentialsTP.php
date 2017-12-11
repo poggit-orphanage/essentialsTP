@@ -25,6 +25,7 @@ use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
 use pocketmine\tile\Sign;
 use pocketmine\event\block\SignChangeEvent;
+use pocketmine\Server;
 
 
 
@@ -222,22 +223,23 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
-                        {
-                            if ($sql['world'] == $curr_world->getName())
-                            {
-                                $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
-
-                                $player->teleport($pos);
-                                $this->update_cooldown($player->getName(), time(), 'warp');
-                                $player->sendMessage($this->config->get("Lang_warp_to")." ".TextFormat::GOLD.$sql['title']);
-                                return true;
-                            }
-                        }
-                    } else {
-                        $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_warp_listed"));
-                        return true;
-                    }
+							if(isset($sql['world'])){
+								if(Server::getInstance()->loadLevel($sql['world']) != false){
+									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
+									$player->teleport($pos);
+									$this->update_cooldown($player->getName(), time(), 'warp');
+									$player->sendMessage($this->config->get("Lang_warp_to") . " " . TextFormat::GOLD . $sql['title']);
+									return true;
+								}else{
+									$player->sendMessage(TextFormat::RED . $this->config->get("Land_chunk_not_loaded"));
+									return true;
+								}
+							}
+                } else {
+						$player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_warp_listed"));
+						return true;
+					}
                 }
                 else
                 {
@@ -554,20 +556,19 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $this->result = $this->prepare->execute();
                             $sql = $this->fetchall();
                             if( count($sql) > 0 ) {
-                                $sql = $sql[0];
-                                foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
-                                {
-                                    if ($sql['world'] == $curr_world->getName())
-                                    {
-                                        $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
-
-                                        $sender->teleport($pos);
-                                        $this->update_cooldown($this->username, time(), 'home');
-                                        $sender->sendMessage($this->config->get("Lang_teleport_home"));
-                                        return true;
-                                    }
-                                }
-                            }
+								$sql = $sql[0];
+								if(isset($sql['world']) && Server::getInstance()->loadLevel($sql['world']) != false){
+									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
+									$sender->teleport($pos);
+									$this->update_cooldown($this->username, time(), 'home');
+									$sender->sendMessage($this->config->get("Lang_teleport_home"));
+									return true;
+								}else{
+									$sender->sendMessage(TextFormat::RED . $this->config->get("Land_chunk_not_loaded"));
+									return true;
+								}
+							}
                             else
                             {
                                 $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_no_home_name"));
@@ -898,24 +899,26 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
                             $this->result = $this->prepare->execute();
                             $sql          = $this->fetchall();
-                            if( count($sql) > 0 ) {
-                                $sql = $sql[0];
-                                foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
-                                {
-                                    if ($sql['world'] == $curr_world->getName())
-                                    {
-                                        $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
+							if(count($sql) > 0){
+								$sql = $sql[0];
+								if(isset($sql['world'])){
+									if(Server::getInstance()->loadLevel($sql['world']) != false){
+										$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+										$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
+										$sender->sendMessage($this->config->get("Lang_warp_to") . " " . TextFormat::GOLD . $sql['title']);
+										$sender->teleport($pos);
+										$this->update_cooldown($sender->getName(), time(), 'warp');
+										return true;
+									}else{
+										$sender->sendMessage(TextFormat::RED . $this->config->get("Land_chunk_not_loaded"));
+										return true;
+									}
+								}
 
-                                        $sender->teleport($pos);
-                                        $this->update_cooldown($sender->getName(), time(), 'warp');
-                                        $sender->sendMessage($this->config->get("Lang_warp_to")." ".TextFormat::GOLD.$sql['title']);
-                                        return true;
-                                    }
-                                }
-                            } else {
-                                $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_no_warp_listed"));
-                                return true;
-                            }
+							}else{
+								$sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_warp_listed"));
+								return true;
+							}
                         }
                         else
                         {
