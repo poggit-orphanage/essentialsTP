@@ -1,50 +1,50 @@
 ---
 plugin-name: essentalsTp+
 sqlite-dbname: essentials_tp
-tpa-here-cooldown: "30"
+tpa-here-cooldown: "10"
 tp-home-cooldown: "5"
 tp-warp-cooldown: "5"
 tp-spawn-cooldown: "5"
-MOTD: Welcome to this awsome plugin showcase was hell for the first day but hey lol
+MOTD: Plugin essentialsTP
 wild-MaxX: "300"
 wild-MaxY: "300"
 bed-sets-home: "true"
-Lang_invalid_usage: 'INVALID USAGE:'
+Lang_invalid_usage: 'Commande invalide:'
 Lang_command_only_use_ingame: This command can only be used in the game.
-Lang_no_permissions: '[EssentialsTP] No permission.'
-Lang_teleport_home: Teleported you home.
-Lang_teleport_spawn: Teleported you to spawn.
-Lang_teleport_wild: Teleported you some where wild.
-Lang_teleport_death: Teleported to last death cords.
-Lang_no_spawn_set: No spawn point set for this world.... Using original world spawn.
-Lang_teleport_spawn_original: Teleported you to worlds original spawn.
+Lang_no_permissions: 'Tu n'as pas la permission d'utiliser cette commande'
+Lang_teleport_home: Tu as bien été téléporté à ton home !
+Lang_teleport_spawn: Tu as été téléporté au spawn !
+Lang_teleport_wild: Tu as été téléporté dans la nature !
+Lang_teleport_death: Tu as été téléporté à l'endroit où tu est mort !
+Lang_no_spawn_set: 
+Lang_teleport_spawn_original:Tu as été téléporté au spawn !
 Lang_spawn_set: Spawn set.
-Lang_your_homes: 'Your Homes:'
-Lang_no_home_set: You have not yet set a home.
-Lang_no_home_name: You do not have a home by that name.
-Lang_home_set: Home set as
-Lang_home_delete_1: 'Home named:'
-Lang_home_delete_2: has been deleted.
-Lang_no_teleport_self: You cant teleport to your self.
-Lang_player_not_online: Player is not online.
-Lang_sent_request_you: sent a request to teleport to you.
-Lang_sent_request_them: sent a request to you, to teleport to them.
-Lang_accept_request: to accept this request.
-Lang_decline_request: to decline this request.
-Lang_request_expire_1: This request is only good for
-Lang_request_expire_2: Seconds
-Lang_request_expire_3: before it expires.
-Lang_type: Type
-Lang_no_active_request: No active request exist.
+Lang_your_homes: 'Voici tes sethomes:'
+Lang_no_home_set: Tu n'as pas /sethome 
+Lang_no_home_name: Tu n'as pas de home à ce nom
+Lang_home_set: Tu as bien sethome 
+Lang_home_delete_1: 'Le home named:'
+Lang_home_delete_2: as bien été supprimer !
+Lang_no_teleport_self: Tu ne peut pas te téléporter à toi même xD !
+Lang_player_not_online: Le joueur n'est pas connecté !
+Lang_sent_request_you: 'Tu as bien demandé à te téléporter sur named: !'
+Lang_sent_request_them: as demandé à ce tp sur toi !
+Lang_accept_request: pour accepter sa demande !
+Lang_decline_request: pour dénier sa demande !
+Lang_request_expire_1: Tu as
+Lang_request_expire_2: secondes
+Lang_request_expire_3: pour te téléporter avant que la requête expire !
+Lang_type: 
+Lang_no_active_request: Personne n'as demandé à ce tp sur toi !
 Lang_warps: 'Warps:'
-Lang_no_warps: This server has no warps.
-Lang_no_warp_listed: There is no warp by that name listed.
+Lang_no_warps: Il n'y a pas encore de warp !
+Lang_no_warp_listed: Il n'y a pas de warp à ce nom !
 Lang_warp_set: Warp set as
-Lang_warp_to: You warped to
+Lang_warp_to: Tu as été tp dans ce warp !
 Lang_warp_delete_1: 'Warp named:'
-Lang_warp_delete_2: has been deleted.
-Lang_no_warps_name: No Warps matching that name for this server.
-Land_chunk_not_loaded: Could not load chunk It's not safe to teleport.
-Lang_action_cooldown: This action is on cooldown.
-Lang_no_death: Die already please.
+Lang_warp_delete_2: as bien été effacé !
+Lang_no_warps_name: Il n'existe pas de warp à ce nom !.
+Land_chunk_not_loaded: Ce warp est sûrement bugé... Informe le staff qu'il est bugé !
+Lang_action_cooldown: Tu dois attendre avant d'utiliser cette commande !
+Lang_no_death: Tu dois mourir avant !
 ...
