@@ -8,6 +8,7 @@ tp-spawn-cooldown: "5"
 MOTD: Welcome to this awsome plugin showcase was hell for the first day but hey lol
 wild-MaxX: "300"
 wild-MaxY: "300"
+wild-MaxZ: "300"
 bed-sets-home: "true"
 Lang_invalid_usage: 'INVALID USAGE:'
 Lang_command_only_use_ingame: This command can only be used in the game.

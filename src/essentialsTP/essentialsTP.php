@@ -259,15 +259,15 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 {
                     if ($this->world == $curr_world->getName())
                     {
-                        $pos = $player->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                        $pos = $player->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(75,$this->config->get("wild-MaxY")),rand('-'.$this->config->get("wild-MaxZ"), $this->config->get("wild-MaxZ"))));
                         $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
                         $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
                         $pos->getLevel()->generateChunk($pos->getX(),$pos->getZ());
-                        $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                        $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),$pos->getY(),$pos->getZ()));
 
                         if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
                         {
-                            $player->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                            $player->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),$pos->getY(),$pos->getZ())));
                             $player->sendMessage($this->config->get("Lang_teleport_wild"));
                             return true;
                         }
@@ -1046,11 +1046,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     {
                         if ($this->world == $curr_world->getName())
                         {
-                            $pos = $sender->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                            $pos = $sender->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(75,$this->config->get("wild-MaxY")),rand('-'.$this->config->get("wild-MaxZ"), $this->config->get("wild-MaxZ"))));
                                 $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
                                 $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
                                 $pos->getLevel()->generateChunk($pos->getX(),$pos->getZ());
-                                $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                                $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),$pos->getY(),$pos->getZ()));
 
                             //var_dump($pos);
                             //var_dump($pos->getLevel()->isChunkGenerated($pos->getX(),$pos->getZ()));
@@ -1060,7 +1060,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                             if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
                             {
-                                $sender->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                                $sender->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),$pos->getY(),$pos->getZ())));
                                 $sender->sendMessage($this->config->get("Lang_teleport_wild"));
                                 return true;
                             }
