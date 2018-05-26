@@ -262,7 +262,6 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         $pos = $player->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                         $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
                         $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                        $pos->getLevel()->generateChunk($pos->getX(),$pos->getZ());
                         $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                         if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
@@ -1049,7 +1048,6 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $pos = $sender->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                                 $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
                                 $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                                $pos->getLevel()->generateChunk($pos->getX(),$pos->getZ());
                                 $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                             //var_dump($pos);
