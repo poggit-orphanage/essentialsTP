@@ -196,9 +196,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
     public function onBlockTap(PlayerInteractEvent $event)
     {
-        $player = $event->getPlayer();
+		if ($event->isCancelled()) return true;
+		$player = $event->getPlayer();
         $block  = $event->getBlock();
-
         $tile = $block->getLevel()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
         if($tile instanceof Sign) {
             $text    = $tile->getText();
@@ -404,6 +404,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
     public function onSignChange(SignChangeEvent $event)
     {
+		if ($event->isCancelled()) return true;
         $player = $event->getPlayer();
 
         if(strtolower($event->getLine(0)) === "[warp]"){
