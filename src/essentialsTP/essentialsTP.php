@@ -599,7 +599,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     {
                         $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
                         $this->username = $sender->getName();
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getLevel()->getFolderName();
                         $this->home_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                         $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -948,7 +948,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if((count($args) != 0) && (count($args) < 2))
                     {
                         $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getLevel()->getFolderName();
                         $this->warp_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                         $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
