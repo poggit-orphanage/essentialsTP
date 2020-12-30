@@ -98,7 +98,7 @@ permissions:
       default: true
      essentialstp.command.wild:
       description: "Allows player to teleport to a random location in world"
-      default: true
+      default: op
      essentialstp.command.back:
       description: "Allows player go back to their last death location"
       default: true
