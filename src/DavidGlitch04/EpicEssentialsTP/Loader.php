@@ -532,7 +532,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'spawn':
                 if (!$sender->hasPermission("epicessentialstp.command.spawn")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
