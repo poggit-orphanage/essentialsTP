@@ -37,6 +37,8 @@ class Loader extends PluginBase
 
     public mixed $prepare;
 
+    public mixed $tpa_cooldown;
+
     public function onEnable(): void
     {
         $this->provider = new SQLiteProvider($this);
@@ -120,7 +122,6 @@ class Loader extends PluginBase
                     }
                 } else {
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
-                    return true;
                 }
                 break;
             case 'sethome':
@@ -168,11 +169,10 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'delhome':
                 if ($sender instanceof Player) {
                     if (!$sender->hasPermission("epicessentialstp.command.delhome")) {
-                        $sender->sendMessage(TextFormat::RED . $this->cprovider->onfig->get("Lang_no_permissions"));
+                        $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
                         return true;
                     }
                     if ((count($args) != 0) && (count($args) < 2)) {
@@ -202,7 +202,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'tpa':
                 if (!$sender->hasPermission("epicessentialstp.command.tpa")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -241,7 +240,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'tpahere':
                 if (!$sender->hasPermission("epicessentialstp.command.tpahere")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -280,7 +278,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'tpaccept':
                 if (!$sender->hasPermission("epicessentialstp.command.tpaccept")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -306,7 +303,6 @@ class Loader extends PluginBase
                                   $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
                           case 'tpahere':
                               if ($this->getServer()->getPlayerByPrefix($sql['player_from']) instanceof Player) {
                                   $sender->teleport($this->getServer()->getPlayerByPrefix($sql['player_from'])->getPosition());
@@ -334,7 +330,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'tpdeny':
                 if (!$sender->hasPermission("epicessentialstp.command.tpdeny")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -350,7 +345,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'warp':
                 if (!$sender->hasPermission("epicessentialstp.command.warp")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -412,7 +406,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'setwarp':
                 if (!$sender->hasPermission("epicessentialstp.command.setwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -638,6 +631,6 @@ class Loader extends PluginBase
             default:
                 return false;
             }
-        return false;
+        return true;
     }
 }
