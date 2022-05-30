@@ -503,11 +503,9 @@ class Loader extends PluginBase
                             $pos = $sender->getWorld()->getSafeSpawn(new Vector3($x, $y, $z));
                             $pos->getWorld()->getChunk($x, $z);
                             $pos = $pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z));
-                            if ($sender->getWorld()->isChunkLoaded($x, $z)) {
-                                $sender->teleport($pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z)));
-                                $sender->sendMessage($this->provider->config->get("Lang_teleport_wild"));
-                                return true;
-                            }
+                            $sender->teleport($pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z)));
+                            $sender->sendMessage($this->provider->config->get("Lang_teleport_wild"));
+                            return true;
                         }
                     }
                 } else {
@@ -619,7 +617,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             default:
                 return false;
             }

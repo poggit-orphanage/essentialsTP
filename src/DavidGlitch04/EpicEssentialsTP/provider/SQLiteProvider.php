@@ -106,21 +106,18 @@ class SQLiteProvider
                     $this->loader->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 case 'warp':
                     $this->loader->prepare = $this->db2->prepare("UPDATE cooldowns SET warp = :time WHERE player = :name");
                     $this->loader->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 case 'spawn':
                     $this->loader->prepare = $this->db2->prepare("UPDATE cooldowns SET spawn = :time WHERE player = :name");
                     $this->loader->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 default:
                     return false;
             }
@@ -133,7 +130,6 @@ class SQLiteProvider
 
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 case 'warp':
                     $this->loader->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, :time, 0, :name)");
                     $this->loader->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -141,7 +137,6 @@ class SQLiteProvider
 
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 case 'spawn':
                     $this->loader->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, 0, :time, :name)");
                     $this->loader->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -149,7 +144,6 @@ class SQLiteProvider
 
                     $this->loader->result = $this->loader->prepare->execute();
                     return true;
-                    break;
                 default:
                     return false;
             }

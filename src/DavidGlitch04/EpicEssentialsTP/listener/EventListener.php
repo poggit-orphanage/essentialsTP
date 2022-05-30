@@ -56,7 +56,7 @@ class EventListener implements Listener
             if ($player->hasPermission("epicessentialstp.command.bedsethome")) {
                 $this->loader->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
                 $this->loader->username = $player->getName();
-                $this->loader->world = $player->getWorld()->getProvider();
+                $this->loader->world = $player->getWorld()->getFolderName();
                 $this->loader->home_loc = "bed";
                 $this->loader->prepare = $this->provider->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                 $this->loader->prepare->bindValue(":name", $this->loader->username, SQLITE3_TEXT);
@@ -154,29 +154,25 @@ class EventListener implements Listener
                 $this->loader->world = $player->getWorld()->getFolderName();
                 foreach (Server::getInstance()->getWorldManager()->getWorlds() as $aval_world => $curr_world) {
                     if ($this->loader->world == $curr_world->getFolderName()) {
-                        $pos = $player->getWorld()->getSafeSpawn(new Vector3(
-                            rand(
-                                '-'.$this->provider->config->get("wild-MaxX"),
-                                $this->provider->config->get("wild-MaxX")
-                            ),
-                            rand(70, 100),
-                            rand(
-                                '-'.$this->provider->config->get("wild-MaxY"),
-                                $this->provider->config->get("wild-MaxY")
-                            )
-                        ));
-                        $pos->getWorld()->loadChunk($pos->getX(), $pos->getZ());
-                        $pos->getWorld()->getChunk($pos->getX(), $pos->getZ(), true);
-                        $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(), rand(4, 100), $pos->getZ()));
-
-                        if ($pos->getWorld()->isChunkLoaded($pos->getX(), $pos->getZ())) {
-                            $player->teleport($pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(), rand(4, 100), $pos->getZ())));
-                            $player->sendMessage($this->provider->config->get("Lang_teleport_wild"));
-                            return true;
-                        } else {
+                        $x = rand(
+                            '-'.$this->provider->config->get("wild-MaxX"),
+                            $this->provider->config->get("wild-MaxX")
+                        );
+                        $y = rand(70, 100);
+                        $z = rand(
+                            '-'.$this->provider->config->get("wild-MaxY"),
+                            $this->provider->config->get("wild-MaxY")
+                        );
+                        $player->getWorld()->loadChunk($x, $z);
+                        if (!$player->getWorld()->isChunkLoaded($x, $z)) {
                             $player->sendMessage($this->provider->config->get("Land_chunk_not_loaded"));
                             return true;
                         }
+                        $pos = $player->getWorld()->getSafeSpawn(new Vector3($x, $y, $z));
+                        $pos->getWorld()->getChunk($x, $z);
+                        $pos = $pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z));
+                        $player->teleport($pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z)));
+                        $player->sendMessage($this->provider->config->get("Lang_teleport_wild"));
                     }
                 }
             } elseif (strtolower($text[0]) === "[spawn]") {
@@ -366,7 +362,7 @@ class EventListener implements Listener
                     if ($sql['world'] == $curr_world->getFolderName()) {
                         $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                         $this->provider->update_cooldown($this->loader->username, time(), 'home');
-                        $player->sendMessage($this->config->get("Lang_teleport_home"));
+                        $player->sendMessage($this->provider->config->get("Lang_teleport_home"));
                         return true;
                     }
                 }
