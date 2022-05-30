@@ -54,7 +54,7 @@ class EventListener implements Listener
         if ($this->provider->config->get("bed-sets-home") == true) {
             $player = $event->getPlayer();
             if ($player->hasPermission("epicessentialstp.command.bedsethome")) {
-                $this->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
+                $this->loader->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
                 $this->loader->username = $player->getName();
                 $this->loader->world = $player->getWorld()->getProvider();
                 $this->loader->home_loc = "bed";
@@ -68,18 +68,18 @@ class EventListener implements Listener
                     $this->loader->prepare->bindValue(":name", $this->loader->username, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":title", $this->loader->home_loc, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":world", $this->loader->world, SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":x", $this->player_cords['x'], SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":y", $this->player_cords['y'], SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":z", $this->player_cords['z'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":x", $this->loader->player_cords['x'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":y", $this->loader->player_cords['y'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":z", $this->loader->player_cords['z'], SQLITE3_TEXT);
                     $this->loader->result = $this->loader->prepare->execute();
                 } else {
                     $this->loader->prepare = $this->provider->db2->prepare("INSERT INTO homes (player, title, world, x, y, z) VALUES (:name, :title, :world, :x, :y, :z)");
                     $this->loader->prepare->bindValue(":name", $this->loader->username, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":title", $this->loader->home_loc, SQLITE3_TEXT);
                     $this->loader->prepare->bindValue(":world", $this->loader->world, SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":x", $this->player_cords['x'], SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":y", $this->player_cords['y'], SQLITE3_TEXT);
-                    $this->loader->prepare->bindValue(":z", $this->player_cords['z'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":x", $this->loader->player_cords['x'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":y", $this->loader->player_cords['y'], SQLITE3_TEXT);
+                    $this->loader->prepare->bindValue(":z", $this->loader->player_cords['z'], SQLITE3_TEXT);
                     $this->loader->result = $this->loader->prepare->execute();
                 }
             }

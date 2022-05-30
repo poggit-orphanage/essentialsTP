@@ -314,7 +314,6 @@ class Loader extends PluginBase
                                   $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
                           default:
                               return false;
                       }
@@ -412,11 +411,6 @@ class Loader extends PluginBase
                     return true;
                 }
                 if ($sender instanceof Player) {
-                    if (!$sender->hasPermission("epicessentialstp.command.setwarp")) {
-                        $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
-                        return true;
-                    }
-
                     if ((count($args) != 0) && (count($args) < 2)) {
                         $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
                         $this->world = $sender->getWorld()->getFolderName();
@@ -453,7 +447,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'delwarp':
                 if (!$sender->hasPermission("epicessentialstp.command.delwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -484,7 +477,6 @@ class Loader extends PluginBase
                     $sender->sendMessage(TextFormat::RED.$this->provider->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
             case 'wild':
                 if (!$sender->hasPermission("epicessentialstp.command.wild")) {
                     $sender->sendMessage(TextFormat::RED . $this->provider->config->get("Lang_no_permissions"));
@@ -509,7 +501,7 @@ class Loader extends PluginBase
                                 return true;
                             }
                             $pos = $sender->getWorld()->getSafeSpawn(new Vector3($x, $y, $z));
-                            $pos->getWorld()->getChunk($x, $z, true);
+                            $pos->getWorld()->getChunk($x, $z);
                             $pos = $pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z));
                             if ($sender->getWorld()->isChunkLoaded($x, $z)) {
                                 $sender->teleport($pos->getWorld()->getSafeSpawn(new Vector3($x, rand(4, 100), $z)));
