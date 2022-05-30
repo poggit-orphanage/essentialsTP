@@ -1,0 +1,9 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/BlockMagicDev/EpicEssentialsTP
+build-by-default: true
+branches:
+- master
+projects:
+  EpicEssentialsTP:
+    path: ""
+    icon: "assets/images/icon.png"
+...
