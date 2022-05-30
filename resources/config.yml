@@ -1,17 +1,16 @@
 ---
-plugin-name: essentalsTp+
-sqlite-dbname: essentials_tp
+plugin-name: EpicessentalsTp+
+sqlite-dbname: epicessentials_tp
 tpa-here-cooldown: "30"
 tp-home-cooldown: "5"
 tp-warp-cooldown: "5"
 tp-spawn-cooldown: "5"
-MOTD: Welcome to this awsome plugin showcase was hell for the first day but hey lol
 wild-MaxX: "300"
 wild-MaxY: "300"
 bed-sets-home: "true"
 Lang_invalid_usage: 'INVALID USAGE:'
 Lang_command_only_use_ingame: This command can only be used in the game.
-Lang_no_permissions: '[EssentialsTP] No permission.'
+Lang_no_permissions: '[EpicEssentialsTP] No permission.'
 Lang_teleport_home: Teleported you home.
 Lang_teleport_spawn: Teleported you to spawn.
 Lang_teleport_wild: Teleported you some where wild.

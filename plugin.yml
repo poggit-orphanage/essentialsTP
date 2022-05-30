@@ -1,143 +1,148 @@
-name: essentialsTP
-main: essentialsTP\essentialsTP
-version: 1.2.2
-api: [3.0.0]
-extensions: [sqlite3]
+name: EpicEssentialsTP
+version: 1.2.3
+api: 4.0.0
+main: DavidGlitch04\EpicEssentialsTP\Loader
+authors:
+  - DavidGlitch04
+  - SOF3
+  - Awzaw
+  - dktapps
+  - 95CivicSi
+  - Haxley
+
 commands:
- home:
-  description: Teleports you home /home will list homes /home <homename> will teleport you.
-  usage: "/home or /home <homename>"
-  permission: essentialstp.command.home
- sethome:
-  description: Sets your home, use names for multiple homes.
-  usage: "/sethome <homename>"
-  permission: essentialstp.command.sethome
- delhome:
-  description: Delete your selected home.
-  usage: "/delhome <homename>"
-  permission: essentialstp.command.delhome
- back:
-  description: Teleports you to your last known death location.
-  usage: "/back"
-  permission: essentialstp.command.back
- wild:
-  description: Teleport to a random location in the world.
-  usage: "/wild"
-  permission: essentialstp.command.wild
- setspawn:
-  description: Sets world spawn point.
-  usage: "/setspawn"
-  permission: essentialstp.command.setspawn
- spawn:
-  description: Teleports to world spawn point.
-  usage: "/spawn"
-  permission: essentialstp.command.spawn
- warp:
-  description: Warps you to a location /warp will list warps /warp <warpname> will teleport you.
-  usage: "/warp or /warp <warpname>"
-  permission: essentialstp.command.tpahere
- setwarp:
-  description: Sets a warp location.
-  usage: "/setwarp <warpname>"
-  permission: essentialstp.command.setwarp
- delwarp:
-  description: Delete a warp location.
-  usage: "/delwarp <warpname>"
-  permission: essentialstp.command.delwarp
- tpa:
-  description: Send teleport request to player to teleport you to player.
-  usage: "/tpa <player>"
-  permission: essentialstp.command.tpa
- tpahere:
-  description: Send teleport request to teleport player to you.
-  usage: "/tpahere <player>"
-  permission: essentialstp.command.tpahere
- tpaccept:
-  description: Accept a teleport request.
-  usage: "/tpaccept"
-  permission: essentialstp.command.tpaccept
- tpdeny:
-   description: decline all active teleport requests.
-   usage: "/tpdeny"
-   permission: essentialstp.command.tpdeny
+  home:
+    description: Teleports you home /home will list homes /home <homename> will teleport you.
+    usage: "/home or /home <homename>"
+    permission: epicessentialstp.command.home
+  sethome:
+    description: Sets your home, use names for multiple homes.
+    usage: "/sethome <homename>"
+    permission: epicessentialstp.command.sethome
+  delhome:
+    description: Delete your selected home.
+    usage: "/delhome <homename>"
+    permission: epicessentialstp.command.delhome
+  back:
+    description: Teleports you to your last known death location.
+    usage: "/back"
+    permission: epicessentialstp.command.back
+  wild:
+    description: Teleport to a random location in the world.
+    usage: "/wild"
+    permission: epicessentialstp.command.wild
+  setspawn:
+    description: Sets world spawn point.
+    usage: "/setspawn"
+    permission: epicessentialstp.command.setspawn
+  spawn:
+    description: Teleports to world spawn point.
+    usage: "/spawn"
+    permission: epicessentialstp.command.spawn
+  warp:
+    description: Warps you to a location /warp will list warps /warp <warpname> will teleport you.
+    usage: "/warp or /warp <warpname>"
+    permission: epicessentialstp.command.tpahere
+  setwarp:
+    description: Sets a warp location.
+    usage: "/setwarp <warpname>"
+    permission: epicessentialstp.command.setwarp
+  delwarp:
+    description: Delete a warp location.
+    usage: "/delwarp <warpname>"
+    permission: epicessentialstp.command.delwarp
+  tpa:
+    description: Send teleport request to player to teleport you to player.
+    usage: "/tpa <player>"
+    permission: epicessentialstp.command.tpa
+  tpahere:
+    description: Send teleport request to teleport player to you.
+    usage: "/tpahere <player>"
+    permission: epicessentialstp.command.tpahere
+  tpaccept:
+    description: Accept a teleport request.
+    usage: "/tpaccept"
+    permission: epicessentialstp.command.tpaccept
+  tpdeny:
+    description: decline all active teleport requests.
+    usage: "/tpdeny"
+    permission: epicessentialstp.command.tpdeny
 permissions:
- essentialstp.*:
-  default: op
-  description: "Allows all essentialsTP commands"
-  children:
-   essentialstp.command.*:
+  epicessentialstp.*:
+    default: op
+    description: "Allows all epicessentialstp commands"
+  epicessentialstp.command.*:
     description: "Allows player to use commands"
     default: op
-    children:
-     essentialstp.command.tpdeny:
-      description: "Allows player to decline request"
-      default: true
-     essentialstp.command.tpaccept:
-      description: "Allows player to accept request"
-      default: true
-     essentialstp.command.tpahere:
-      description: "Allows player to teleport player to them"
-      default: true
-     essentialstp.command.tpa:
-      description: "Allows player to teleport to another player"
-      default: true
-     essentialstp.command.delwarp:
-      description: "Allows player to delete warps"
-      default: op
-     essentialstp.command.setwarp:
-      description: "Allows player to set warps"
-      default: op
-     essentialstp.command.warp:
-      description: "Allows player use warps"
-      default: true
-     essentialstp.command.setspawn:
-      description: "Allows player to set spawn for world"
-      default: op
-     essentialstp.command.spawn:
-      description: "Allows player use spawn command"
-      default: true
-     essentialstp.command.wild:
-      description: "Allows player to teleport to a random location in world"
-      default: true
-     essentialstp.command.back:
-      description: "Allows player go back to their last death location"
-      default: true
-     essentialstp.command.delhome:
-      description: "Allows player to delete their homes"
-      default: true
-     essentialstp.command.sethome:
-      description: "Allows player to set their homes"
-      default: true
-     essentialstp.command.home:
-      description: "Allows player to use the home command"
-      default: true
-     essentialstp.command.bedsethome:
-      description: "Allows player to set home with their bed"
-      default: true
-     essentialstp.command.sign.warp:
-      description: "Allows player to use warp signs"
-      default: true
-     essentialstp.command.sign.wild:
-      description: "Allows player to use wild signs"
-      default: op
-     essentialstp.command.sign.spawn:
-      description: "Allows player to use spawn signs"
-      default: true
-     essentialstp.command.sign.warp.create:
-      description: "Allows player to create warp signs"
-      default: op
-     essentialstp.command.sign.wild.create:
-      description: "Allows player to create wild signs"
-      default: op
-     essentialstp.command.sign.spawn.create:
-      description: "Allows player to create spawn signs"
-      default: op
-     essentialstp.command.sign.warp.break:
-      description: "Allows player to break warp signs"
-      default: op
-     essentialstp.command.sign.wild.break:
-      description: "Allows player to break wild signs"
-      default: op
-     essentialstp.command.sign.spawn.break:
-      description: "Allows player to break spawn signs"
-      default: op
+  epicessentialstp.command.tpdeny:
+    description: "Allows player to decline request"
+    default: true
+  epicessentialstp.command.tpaccept:
+    description: "Allows player to accept request"
+    default: true
+  epicessentialstp.command.tpahere:
+    description: "Allows player to teleport player to them"
+    default: true
+  epicessentialstp.command.tpa:
+    description: "Allows player to teleport to another player"
+    default: true
+  epicessentialstp.command.delwarp:
+    description: "Allows player to delete warps"
+    default: op
+  epicessentialstp.command.setwarp:
+    description: "Allows player to set warps"
+    default: op
+  epicessentialstp.command.warp:
+    description: "Allows player use warps"
+    default: true
+  epicessentialstp.command.setspawn:
+    description: "Allows player to set spawn for world"
+    default: op
+  epicessentialstp.command.spawn:
+    description: "Allows player use spawn command"
+    default: true
+  epicessentialstp.command.wild:
+    description: "Allows player to teleport to a random location in world"
+    default: true
+  epicessentialstp.command.back:
+    description: "Allows player go back to their last death location"
+    default: true
+  epicessentialstp.command.delhome:
+    description: "Allows player to delete their homes"
+    default: true
+  epicessentialstp.command.sethome:
+    description: "Allows player to set their homes"
+    default: true
+  epicessentialstp.command.home:
+    description: "Allows player to use the home command"
+    default: true
+  epicessentialstp.command.bedsethome:
+    description: "Allows player to set home with their bed"
+    default: true
+  epicessentialstp.command.sign.warp:
+    description: "Allows player to use warp signs"
+    default: true
+  epicessentialstp.command.sign.wild:
+    description: "Allows player to use wild signs"
+    default: op
+  epicessentialstp.command.sign.spawn:
+    description: "Allows player to use spawn signs"
+    default: true
+  epicessentialstp.command.sign.warp.create:
+    description: "Allows player to create warp signs"
+    default: op
+  epicessentialstp.command.sign.wild.create:
+    description: "Allows player to create wild signs"
+    default: op
+  epicessentialstp.command.sign.spawn.create:
+    description: "Allows player to create spawn signs"
+    default: op
+  epicessentialstp.command.sign.warp.break:
+    description: "Allows player to break warp signs"
+    default: op
+  epicessentialstp.command.sign.wild.break:
+    description: "Allows player to break wild signs"
+    default: op
+  epicessentialstp.command.sign.spawn.break:
+    description: "Allows player to break spawn signs"
+    default: op
