@@ -43,12 +43,12 @@ tpdeny | decline all active teleport requests. | epicessentialstp.command.tpdecl
 
 Type | Permission |
 ----------------- | ------------- |
-Sign Warp Create | essentialstp.command.sign.warp.create
-Sign Wild Create | essentialstp.command.sign.wild.create
-Sign Spawn Create | essentialstp.command.sign.spawn.create
-Sign Warp Break | essentialstp.command.sign.warp.break
-Sign Wild Break | essentialstp.command.sign.wild.break
-Sign Spawn Break | essentialstp.command.sign.spawn.break
+Sign Warp Create | epicessentialstp.command.sign.warp.create
+Sign Wild Create | epicessentialstp.command.sign.wild.create
+Sign Spawn Create | epicessentialstp.command.sign.spawn.create
+Sign Warp Break | epicessentialstp.command.sign.warp.break
+Sign Wild Break | epicessentialstp.command.sign.wild.break
+Sign Spawn Break | epicessentialstp.command.sign.spawn.break
 
 ## All Contributors
 <a href="https://github.com/BlockMagicDev/EpicEssentialsTP/graphs/contributors">
