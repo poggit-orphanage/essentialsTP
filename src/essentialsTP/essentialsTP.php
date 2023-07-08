@@ -1343,7 +1343,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
     }
 
-    public function onEnable(){
+    public function onEnable(): void{
         $this->getLogger()->info(TextFormat::GREEN."essentialsTP+ loading...");
         @mkdir($this->getDataFolder());
         $this->check_config();
@@ -1368,7 +1368,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    public function onDisable(){
+    public function onDisable(): void{
         if($this->prepare){
             $this->prepare->close();
         }
