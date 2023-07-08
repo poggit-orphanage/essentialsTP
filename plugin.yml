@@ -60,4 +60,84 @@ commands:
    description: decline all active teleport requests.
    usage: "/tpdeny"
    permission: essentialstp.command.tpdeny
-
+permissions:
+ essentialstp.*:
+  default: op
+  description: "Allows all essentialsTP commands"
+  children:
+   essentialstp.command.*:
+    description: "Allows player to use commands"
+    default: op
+    children:
+     essentialstp.command.tpdeny:
+      description: "Allows player to decline request"
+      default: true
+     essentialstp.command.tpaccept:
+      description: "Allows player to accept request"
+      default: true
+     essentialstp.command.tpahere:
+      description: "Allows player to teleport player to them"
+      default: true
+     essentialstp.command.tpa:
+      description: "Allows player to teleport to another player"
+      default: true
+     essentialstp.command.delwarp:
+      description: "Allows player to delete warps"
+      default: op
+     essentialstp.command.setwarp:
+      description: "Allows player to set warps"
+      default: op
+     essentialstp.command.warp:
+      description: "Allows player use warps"
+      default: true
+     essentialstp.command.setspawn:
+      description: "Allows player to set spawn for world"
+      default: op
+     essentialstp.command.spawn:
+      description: "Allows player use spawn command"
+      default: true
+     essentialstp.command.wild:
+      description: "Allows player to teleport to a random location in world"
+      default: true
+     essentialstp.command.back:
+      description: "Allows player go back to their last death location"
+      default: true
+     essentialstp.command.delhome:
+      description: "Allows player to delete their homes"
+      default: true
+     essentialstp.command.sethome:
+      description: "Allows player to set their homes"
+      default: true
+     essentialstp.command.home:
+      description: "Allows player to use the home command"
+      default: true
+     essentialstp.command.bedsethome:
+      description: "Allows player to set home with their bed"
+      default: true
+     essentialstp.command.sign.warp:
+      description: "Allows player to use warp signs"
+      default: true
+     essentialstp.command.sign.wild:
+      description: "Allows player to use wild signs"
+      default: op
+     essentialstp.command.sign.spawn:
+      description: "Allows player to use spawn signs"
+      default: true
+     essentialstp.command.sign.warp.create:
+      description: "Allows player to create warp signs"
+      default: op
+     essentialstp.command.sign.wild.create:
+      description: "Allows player to create wild signs"
+      default: op
+     essentialstp.command.sign.spawn.create:
+      description: "Allows player to create spawn signs"
+      default: op
+     essentialstp.command.sign.warp.break:
+      description: "Allows player to break warp signs"
+      default: op
+     essentialstp.command.sign.wild.break:
+      description: "Allows player to break wild signs"
+      default: op
+     essentialstp.command.sign.spawn.break:
+      description: "Allows player to break spawn signs"
+      default: op
