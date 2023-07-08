@@ -71,7 +71,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         return $row;
     }
 
-    public function onLoad(){
+    public function onLoad(): void{
 
     }
 
