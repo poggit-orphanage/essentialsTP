@@ -404,14 +404,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 		if ($event->isCancelled()) return true;
         $player = $event->getPlayer();
 
-        if(strtolower($event->getLine(0)) === "[warp]"){
+        if(strtolower($event->getNewText()->getLine(0)) === "[warp]"){
             if (!$player->hasPermission("essentialstp.command.sign.warp.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 // lets check warp exist first if not don't allow change
-                $this->warp_loc = $event->getLine(1);
+                $this->warp_loc = $event->getNewText()->getLine(1);
                 $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                 $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
                 $this->result = $this->prepare->execute();
@@ -421,18 +421,18 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 return true;
             }
-        }elseif(strtolower($event->getLine(0)) === "[wild]"){
+        }elseif(strtolower($event->getNewText()->getLine(0)) === "[wild]"){
             if (!$player->hasPermission("essentialstp.command.sign.wild.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 return true;
             }
-        }elseif(strtolower($event->getLine(0)) === "[spawn]"){
+        }elseif(strtolower($event->getNewText()->getLine(0)) === "[spawn]"){
             if (!$player->hasPermission("essentialstp.command.sign.spawn.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 return true;
@@ -451,7 +451,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             $sql = $this->fetchall();
             if (count($sql) > 0){
                 $sql = $sql[0];
-                foreach($player->getServer()->getWorlds() as $aval_world => $curr_world)
+                foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
                     if ($sql['world'] == $curr_world->getName())
                     {
@@ -471,7 +471,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($player->getServer()->getWorlds() as $aval_world => $curr_world)
+                        foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
                             if ($sql['world'] == $curr_world->getName())
                             {
