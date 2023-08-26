@@ -453,7 +453,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 $sql = $sql[0];
                 foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
-                    if ($sql['world'] == $curr_world->getName())
+                    if ($sql['world'] == $curr_world->getFolderName())
                     {
                         $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                         $this->update_cooldown($this->username, time(), 'home');
@@ -473,7 +473,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         $sql = $sql[0];
                         foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
-                            if ($sql['world'] == $curr_world->getName())
+                            if ($sql['world'] == $curr_world->getFolderName())
                             {
                                 $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                                 $this->update_cooldown($player->getName(), time(), 'spawn');
@@ -554,8 +554,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $sql = $this->fetchall();
                             if( count($sql) > 0 ) {
 								$sql = $sql[0];
-								if(isset($sql['world']) && Server::getInstance()->loadWorld($sql['world']) != false){
-									$curr_world = Server::getInstance()->getWorldByName($sql['world']);
+								if(isset($sql['world']) && Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$sender->teleport($pos);
 									$this->update_cooldown($this->username, time(), 'home');
