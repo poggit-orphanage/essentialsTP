@@ -254,11 +254,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 $this->world = $player->getWorld()->getFolderName();
                 foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
-                    if ($this->world == $curr_world->getName())
+                    if ($this->world == $curr_world->getFolderName())
                     {
                         $pos = $player->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                         $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
-                        $pos->getWorld()->getChunk($pos->getX(),$pos->getZ(),true);
+                        $pos->getWorld()->getChunk($pos->getX(),$pos->getZ());
                         $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                         if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
@@ -297,7 +297,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         $sql = $sql[0];
                         foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
-                            if ($sql['world'] == $curr_world->getName())
+                            if ($sql['world'] == $curr_world->getFolderName())
                             {
                                 $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 
@@ -312,7 +312,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     else
                     {
                         $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                        $player->teleport($player->getLevel()->getSpawnLocation());
+                        $player->teleport($player->getWorld()->getSpawnLocation());
                         $this->update_cooldown($player->getName(), time(), 'spawn');
                         $player->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                         return true;
@@ -333,14 +333,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $player = $event->getPlayer();
         $block  = $event->getBlock();
         //check tile above is not sign as breaking it will break sign
-        $tile_above = $block->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), ($block->getPosition()->getFloorY()+1), $block->getPosition()->getFloorZ()));
+        $tile_above = $block->getPosition()->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), ($block->getPosition()->getFloorY()+1), $block->getPosition()->getFloorZ()));
         if($tile_above instanceof Sign) {
             $text = $tile_above->getText();
 
             if(strtolower($text[0]) === "[warp]"){
                 if (!$player->hasPermission("essentialstp.command.sign.warp.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -348,7 +348,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif (strtolower($text[0]) === "[wild]"){
                 if (!$player->hasPermission("essentialstp.command.sign.wild.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -356,7 +356,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif (strtolower($text[0]) === "[spawn]"){
                 if (!$player->hasPermission("essentialstp.command.sign.spawn.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -365,14 +365,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
 
         //normal tile
-        $tile = $block->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
+        $tile = $block->getPosition()->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
             if ($tile instanceof Sign) {
                 $text = $tile->getText();
 
                 if (strtolower($text[0]) === "[warp]") {
                     if (!$player->hasPermission("essentialstp.command.sign.warp.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
@@ -380,7 +380,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 } elseif (strtolower($text[0]) === "[wild]") {
                     if (!$player->hasPermission("essentialstp.command.sign.wild.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
@@ -388,7 +388,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 } elseif (strtolower($text[0]) === "[spawn]") {
                     if (!$player->hasPermission("essentialstp.command.sign.spawn.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
