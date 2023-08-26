@@ -140,9 +140,10 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     public function onPlayerDeath(PlayerDeathEvent $event){
         $player = $event->getEntity();
         $this->death_loc[$player->getName()] = new Position(
-            round($player->getX()),
-            round($player->getY()),
-            round($player->getZ()),
+		
+            round($player->getPosition()->getX()),
+            round($player->getPosition()->getY()),
+            round($player->getPosition()->getZ()),
             $player->getWorld()
         );
     }
@@ -152,7 +153,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         {
             $player = $event->getPlayer();
             if ($player->hasPermission("essentialstp.command.bedsethome")) {
-                $this->player_cords = array('x' => (int) $player->getX(),'y' => (int) $player->getY(),'z' => (int) $player->getZ());
+                $this->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
                 $this->username = $player->getName();
                 $this->world = $player->getWorld()->getName();
                 $this->home_loc = "bed";
@@ -942,7 +943,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     if((count($args) != 0) && (count($args) < 2))
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
                         $this->world = $sender->getWorld()->getName();
                         $this->warp_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
@@ -1321,7 +1322,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
         if($this->config->get("MOTD") == false)
         {
-            $this->config->set("MOTD", "EssintialsTP+ Welcomes you please change this motd in config");
+            $this->config->set("MOTD", "EssentialsTP+ Welcomes you please change this motd in config");
             $this->config->save();
         }
         if($this->config->get("wild-MaxX") == false)
