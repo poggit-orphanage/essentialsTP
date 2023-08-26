@@ -221,8 +221,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
 							if(isset($sql['world'])){
-								if(Server::getInstance()->loadWorld($sql['world']) != false){
-									$curr_world = Server::getInstance()->getWorldByName($sql['world']);
+								if(Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$player->teleport($pos);
 									$this->update_cooldown($player->getName(), time(), 'warp');
@@ -250,7 +250,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $event->setCancelled(true);
                     return true;
                 }
-                $event->setCancelled(true);
+                $event->cancel(true);
                 $this->world = $player->getWorld()->getFolderName();
                 foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                 {
