@@ -196,7 +196,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 		if ($event->isCancelled()) return true;
 		$player = $event->getPlayer();
         $block  = $event->getBlock();
-        $tile = $block->getLevel()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        $tile = $block->getLevel()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
         if($tile instanceof Sign) {
             $text    = $tile->getText();
 
@@ -333,7 +333,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $player = $event->getPlayer();
         $block  = $event->getBlock();
         //check tile above is not sign as breaking it will break sign
-        $tile_above = $block->getWorld()->getTile(new Vector3($block->getFloorX(), ($block->getFloorY()+1), $block->getFloorZ()));
+        $tile_above = $block->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), ($block->getPosition()->getFloorY()+1), $block->getPosition()->getFloorZ()));
         if($tile_above instanceof Sign) {
             $text = $tile_above->getText();
 
@@ -365,7 +365,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
 
         //normal tile
-        $tile = $block->getWorld()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        $tile = $block->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
             if ($tile instanceof Sign) {
                 $text = $tile->getText();
 
