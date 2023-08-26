@@ -196,7 +196,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 		if ($event->isCancelled()) return true;
 		$player = $event->getPlayer();
         $block  = $event->getBlock();
-        $tile = $block->getLevel()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
+        $tile = $block->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
         if($tile instanceof Sign) {
             $text    = $tile->getText();
 
