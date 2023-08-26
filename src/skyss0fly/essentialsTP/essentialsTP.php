@@ -148,7 +148,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             round($player->getX()),
             round($player->getY()),
             round($player->getZ()),
-            $player->getLevel()
+            $player->getWorld()
         );
     }
 
@@ -159,7 +159,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             if ($player->hasPermission("essentialstp.command.bedsethome")) {
                 $this->player_cords = array('x' => (int) $player->getX(),'y' => (int) $player->getY(),'z' => (int) $player->getZ());
                 $this->username = $player->getName();
-                $this->world = $player->getLevel()->getName();
+                $this->world = $player->getWorld()->getName();
                 $this->home_loc = "bed";
                 $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                 $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -224,8 +224,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
 							if(isset($sql['world'])){
-								if(Server::getInstance()->loadLevel($sql['world']) != false){
-									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+								if(Server::getInstance()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$player->teleport($pos);
 									$this->update_cooldown($player->getName(), time(), 'warp');
@@ -254,19 +254,19 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     return true;
                 }
                 $event->setCancelled(true);
-                $this->world = $player->getLevel()->getName();
-                foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                $this->world = $player->getWorld()->getName();
+                foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                 {
                     if ($this->world == $curr_world->getName())
                     {
-                        $pos = $player->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
-                        $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
-                        $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                        $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                        $pos = $player->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                        $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
+                        $pos->geWorld()->getChunk($pos->getX(),$pos->getZ(),true);
+                        $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
-                        if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
+                        if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
                         {
-                            $player->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                            $player->teleport($pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
                             $player->sendMessage($this->config->get("Lang_teleport_wild"));
                             return true;
                         }
@@ -298,7 +298,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                        foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                         {
                             if ($sql['world'] == $curr_world->getName())
                             {
@@ -336,7 +336,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $player = $event->getPlayer();
         $block  = $event->getBlock();
         //check tile above is not sign as breaking it will break sign
-        $tile_above = $block->getLevel()->getTile(new Vector3($block->getFloorX(), ($block->getFloorY()+1), $block->getFloorZ()));
+        $tile_above = $block->getWorld()->getTile(new Vector3($block->getFloorX(), ($block->getFloorY()+1), $block->getFloorZ()));
         if($tile_above instanceof Sign) {
             $text = $tile_above->getText();
 
@@ -368,7 +368,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
 
         //normal tile
-        $tile = $block->getLevel()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        $tile = $block->getWorld()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
             if ($tile instanceof Sign) {
                 $text = $tile->getText();
 
@@ -454,7 +454,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             $sql = $this->fetchall();
             if (count($sql) > 0){
                 $sql = $sql[0];
-                foreach($player->getServer()->getLevels() as $aval_world => $curr_world)
+                foreach($player->getServer()->getWorlds() as $aval_world => $curr_world)
                 {
                     if ($sql['world'] == $curr_world->getName())
                     {
@@ -467,14 +467,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }
             else
             {
-                    $this->world = $player->getLevel()->getName();
+                    $this->world = $player->getWorld()->getName();
                     $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                     $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                     $this->result = $this->prepare->execute();
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($player->getServer()->getLevels() as $aval_world => $curr_world)
+                        foreach($player->getServer()->getWorlds() as $aval_world => $curr_world)
                         {
                             if ($sql['world'] == $curr_world->getName())
                             {
@@ -489,7 +489,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     else
                     {
                         $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                        $event->setRespawnPosition($player->getLevel()->getSpawnLocation());
+                        $event->setRespawnPosition($player->getWorld()->getSpawnLocation());
                         $this->update_cooldown($player->getName(), time(), 'spawn');
                         $player->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                         return true;
@@ -557,8 +557,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $sql = $this->fetchall();
                             if( count($sql) > 0 ) {
 								$sql = $sql[0];
-								if(isset($sql['world']) && Server::getInstance()->loadLevel($sql['world']) != false){
-									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+								if(isset($sql['world']) && Server::getInstance()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$sender->teleport($pos);
 									$this->update_cooldown($this->username, time(), 'home');
@@ -599,7 +599,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     {
                         $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
                         $this->username = $sender->getName();
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getName();
                         $this->home_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                         $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -902,8 +902,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 							if(count($sql) > 0){
 								$sql = $sql[0];
 								if(isset($sql['world'])){
-									if(Server::getInstance()->loadLevel($sql['world']) != false){
-										$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+									if(Server::getInstance()->loadWorld($sql['world']) != false){
+										$curr_world = Server::getInstance()->getWorldByName($sql['world']);
 										$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 										$sender->sendMessage($this->config->get("Lang_warp_to") . " " . TextFormat::GOLD . $sql['title']);
 										$sender->teleport($pos);
@@ -948,7 +948,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if((count($args) != 0) && (count($args) < 2))
                     {
                         $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getName();
                         $this->warp_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                         $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
@@ -1041,15 +1041,15 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 if ($sender instanceof Player)
                 {
-                    $this->world = $sender->getLevel()->getName();
-                    foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                    $this->world = $sender->getWorld()->getName();
+                    foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                     {
                         if ($this->world == $curr_world->getName())
                         {
-                            $pos = $sender->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
-                                $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
-                                $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                                $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                            $pos = $sender->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                                $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
+                                $pos->getWorld()->getChunk($pos->getX(),$pos->getZ(),true);
+                                $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                             //var_dump($pos);
                             //var_dump($pos->getLevel()->isChunkGenerated($pos->getX(),$pos->getZ()));
@@ -1057,9 +1057,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             //var_dump($pos->getLevel()->isChunkPopulated($pos->getX(),$pos->getZ()));
                             //$sender->getLevel()->loadChunk($pos->getX(),$pos->getZ());
 
-                            if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
+                            if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
                             {
-                                $sender->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                                $sender->teleport($pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
                                 $sender->sendMessage($this->config->get("Lang_teleport_wild"));
                                 return true;
                             }
@@ -1115,14 +1115,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $this->result = $this->prepare->execute();
                     $cool_sql          = $this->fetchall();
                     if (count($cool_sql) > 0){
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
                         $sql          = $this->fetchall();
                         if( count($sql) > 0 ) {
                             $sql = $sql[0];
-                            foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                            foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                             {
                                 if ($sql['world'] == $curr_world->getName())
                                 {
@@ -1139,7 +1139,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         else
                         {
                             $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                            $sender->teleport($sender->getLevel()->getSpawnLocation());
+                            $sender->teleport($sender->getWorld()->getSpawnLocation());
                             $this->update_cooldown($sender->getName(), time(), 'spawn');
                             $sender->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                             return true;
@@ -1167,7 +1167,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if(count($args) == 0)
                     {
                         $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
