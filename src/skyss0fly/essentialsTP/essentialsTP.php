@@ -156,7 +156,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             if ($player->hasPermission("essentialstp.command.bedsethome")) {
                 $this->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
                 $this->username = $player->getName();
-                $this->world = $player->getWorld()->getName();
+                $this->world = $player->getWorld()->getFolderName();
                 $this->home_loc = "bed";
                 $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                 $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -251,7 +251,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     return true;
                 }
                 $event->setCancelled(true);
-                $this->world = $player->getWorld()->getName();
+                $this->world = $player->getWorld()->getFolderName();
                 foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                 {
                     if ($this->world == $curr_world->getName())
@@ -288,7 +288,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 $this->result = $this->prepare->execute();
                 $cool_sql          = $this->fetchall();
                 if (count($cool_sql) > 0){
-                    $this->world = $player->getLevel()->getName();
+                    $this->world = $player->getWorld()->getFolderName();
                     $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                     $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                     $this->result = $this->prepare->execute();
@@ -464,7 +464,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }
             else
             {
-                    $this->world = $player->getWorld()->getName();
+                    $this->world = $player->getWorld()->getFolderName();
                     $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                     $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                     $this->result = $this->prepare->execute();
@@ -594,9 +594,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     }
                     if((count($args) != 0) && (count($args) < 2))
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
                         $this->username = $sender->getName();
-                        $this->world = $sender->getWorld()->getName();
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->home_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                         $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -945,7 +945,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if((count($args) != 0) && (count($args) < 2))
                     {
                         $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
-                        $this->world = $sender->getWorld()->getName();
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->warp_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                         $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
@@ -1038,10 +1038,10 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 if ($sender instanceof Player)
                 {
-                    $this->world = $sender->getWorld()->getName();
+                    $this->world = $sender->getWorld()->getFolderName();
                     foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                     {
-                        if ($this->world == $curr_world->getName())
+                        if ($this->world == $curr_world->getFolderName())
                         {
                             $pos = $sender->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                                 $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
@@ -1112,7 +1112,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $this->result = $this->prepare->execute();
                     $cool_sql          = $this->fetchall();
                     if (count($cool_sql) > 0){
-                        $this->world = $sender->getWorld()->getName();
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
@@ -1121,7 +1121,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $sql = $sql[0];
                             foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
                             {
-                                if ($sql['world'] == $curr_world->getName())
+                                if ($sql['world'] == $curr_world->getFolderName())
                                 {
                                     $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 
@@ -1163,8 +1163,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 {
                     if(count($args) == 0)
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getWorld()->getName();
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
