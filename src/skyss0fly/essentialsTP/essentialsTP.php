@@ -13,6 +13,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\Listener;
 use pocketmine\world\Position;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
