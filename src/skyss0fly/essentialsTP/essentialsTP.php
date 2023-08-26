@@ -705,7 +705,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                                 $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' ' . TextFormat::GOLD . '/tpdecline' . TextFormat::WHITE . ' '.$this->config->get("Lang_decline_request"));
                                 $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_request_expire_1").' ' . TextFormat::GOLD .$this->config->get("tpa-here-cooldown").' '.$this->config->get("Lang_request_expire_2") . TextFormat::WHITE . ' '.$this->config->get("Lang_request_expire_3"));
                                 $this->prepare = $this->db2->prepare("INSERT INTO tp_requests (player, player_from, type, time, status) VALUES (:name, :name_from, :type, :time, :status)");
-                                $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayer($this->tp_reciver)->getName())), SQLITE3_TEXT);
+                                $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayerExact($this->tp_reciver)->getName())), SQLITE3_TEXT);
                                 $this->prepare->bindValue(":name_from", trim(strtolower($this->tp_sender)), SQLITE3_TEXT);
                                 $this->prepare->bindValue(":type", 'tpa', SQLITE3_TEXT);
                                 $this->prepare->bindValue(":time", time(), SQLITE3_TEXT);
