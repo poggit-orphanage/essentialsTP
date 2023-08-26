@@ -5,7 +5,7 @@
  * skype: advocaite
  */
 
-namespace essentialsTP;
+namespace skyss0fly\essentialsTP;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -17,9 +17,9 @@ use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\Listener;
-use pocketmine\level\Position;
+use pocketmine\world\Position;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
