@@ -203,10 +203,10 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             if(strtolower($text[0]) === "[warp]"){
                 if (!$player->hasPermission("essentialstp.command.sign.warp")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->setCancelled(true);
+                $event->cancel();
                 $this->prepare = $this->db2->prepare("SELECT home,warp,spawn,player FROM cooldowns WHERE player =:name AND warp < :time");
                 $this->prepare->bindValue(":name", $player->getName(), SQLITE3_TEXT);
                 $this->prepare->bindValue(":time", ( time() - $this->config->get("tp-warp-cooldown")), SQLITE3_TEXT);
@@ -247,18 +247,18 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif((strtolower($text[0]) === "[wild]")){
                 if (!$player->hasPermission("essentialstp.command.sign.wild")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->cancel(true);
+                $event->cancel();
                 $this->world = $player->getWorld()->getFolderName();
-                foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
+                foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
                     if ($this->world == $curr_world->getName())
                     {
                         $pos = $player->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                         $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
-                        $pos->geWorld()->getChunk($pos->getX(),$pos->getZ(),true);
+                        $pos->getWorld()->getChunk($pos->getX(),$pos->getZ(),true);
                         $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                         if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
@@ -278,10 +278,10 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif(strtolower($text[0]) === "[spawn]"){
                 if (!$player->hasPermission("essentialstp.command.sign.spawn")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->setCancelled(true);
+                $event->cancel();
                 $this->prepare = $this->db2->prepare("SELECT home,warp,spawn,player FROM cooldowns WHERE player =:name AND spawn < :time");
                 $this->prepare->bindValue(":name", $player->getName(), SQLITE3_TEXT);
                 $this->prepare->bindValue(":time", ( time() - $this->config->get("tp-spawn-cooldown")), SQLITE3_TEXT);
@@ -295,7 +295,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
+                        foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
                             if ($sql['world'] == $curr_world->getName())
                             {
