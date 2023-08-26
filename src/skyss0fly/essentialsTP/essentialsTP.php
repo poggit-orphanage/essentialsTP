@@ -509,7 +509,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             case 'motd':
                 $sender->sendMessage(TextFormat::GOLD.'[MOTD] '.TextFormat::WHITE.$this->config->get("MOTD"));
                 return true;
-                break;
+              //  break;
             case 'home':
                 if ($sender instanceof Player)
                 {
@@ -584,7 +584,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             case 'sethome':
                 if ($sender instanceof Player)
                 {
@@ -641,7 +641,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'delhome':
                 if ($sender instanceof Player)
                 {
@@ -684,7 +684,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+          //      break;
             case 'tpa':
                 if (!$sender->hasPermission("essentialstp.command.tpa")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -727,7 +727,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+         //       break;
             case 'tpahere':
                 if (!$sender->hasPermission("essentialstp.command.tpahere")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -772,7 +772,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'tpaccept':
                 if (!$sender->hasPermission("essentialstp.command.tpaccept")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -804,7 +804,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                                   $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
+                //              break;
                           case 'tpahere':
                               if($this->getServer()->getPlayer($sql['player_from']) instanceof Player)
                               {
@@ -819,7 +819,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                                   $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
+                //              break;
                           default:
                               return false;
                       }
@@ -839,7 +839,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'tpdeny':
                 if (!$sender->hasPermission("essentialstp.command.tpdeny")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -858,7 +858,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             case 'warp':
                 if (!$sender->hasPermission("essentialstp.command.warp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -929,7 +929,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'setwarp':
                 if (!$sender->hasPermission("essentialstp.command.setwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -989,7 +989,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+              //  break;
             case 'delwarp':
                 if (!$sender->hasPermission("essentialstp.command.delwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1030,7 +1030,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+              //  break;
             case 'wild':
                 if (!$sender->hasPermission("essentialstp.command.wild")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1075,7 +1075,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'back':
                 if (!$sender->hasPermission("essentialstp.command.back")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1098,7 +1098,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+            //    break;
             case 'spawn':
                 if (!$sender->hasPermission("essentialstp.command.spawn")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1153,7 +1153,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+          //      break;
             case 'setspawn':
                 if (!$sender->hasPermission("essentialstp.command.setspawn")) {
                     $sender->sendMessage(TextFormat::RED .$this->config->get("Lang_no_permissions"));
@@ -1202,7 +1202,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             default:
                 return false;
             }
