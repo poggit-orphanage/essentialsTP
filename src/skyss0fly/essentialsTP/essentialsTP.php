@@ -1,9 +1,4 @@
 <?php
-/**
- * author: advocaite aka serverkart_rod
- * MONETISE YOUR POCKETMINE SERVER WITH http://serverkart.com
- * skype: advocaite
- */
 
 namespace skyss0fly\essentialsTP;
 
@@ -89,21 +84,21 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 case 'warp':
                     $this->prepare = $this->db2->prepare("UPDATE cooldowns SET warp = :time WHERE player = :name");
                     $this->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 case 'spawn':
                     $this->prepare = $this->db2->prepare("UPDATE cooldowns SET spawn = :time WHERE player = :name");
                     $this->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 default:
                     return false;
             }
@@ -119,7 +114,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                //    break;
                 case 'warp':
                     $this->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, :time, 0, :name)");
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -127,7 +122,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                 //   break;
                 case 'spawn':
                     $this->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, 0, :time, :name)");
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -135,7 +130,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                //    break;
                 default:
                     return false;
             }
