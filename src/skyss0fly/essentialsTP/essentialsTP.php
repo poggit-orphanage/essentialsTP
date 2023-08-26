@@ -19,7 +19,7 @@ use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
-use pocketmine\tile\Sign;
+use pocketmine\block\tile\Sign;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\Server;
 
