@@ -933,16 +933,18 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
            //     break;
             case 'setwarp':
-                if (!$sender->hasPermission("essentialstp.command.setwarp")) {
+             /*   if (!$sender->hasPermission("essentialstp.command.setwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
                     return true;
                 }
+		*/
                 if ($sender instanceof Player)
                 {
-                    if (!$sender->hasPermission("essentialstp.command.setwarp")) {
+                     if (!$sender->hasPermission("essentialstp.command.setwarp")) {
                         $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
                         return true;
                     }
+			
 
                     if((count($args) != 0) && (count($args) < 2))
                     {
