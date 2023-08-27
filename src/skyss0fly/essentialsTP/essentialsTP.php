@@ -791,9 +791,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                       switch($sql['type'])
                       {
                           case 'tpa':
-                              if($this->getServer()->getPlayer($sql['player_from']) instanceof Player)
+                              if($this->getServer()->getPlayerExact($sql['player_from']) instanceof Player)
                               {
-                                  $this->getServer()->getPlayer($sql['player_from'])->teleport($sender->getPosition());
+                                  $this->getServer()->getPlayerExact($sql['player_from'])->teleport($sender->getPosition());
                                   $this->prepare = $this->db2->prepare("UPDATE tp_requests SET status = 1 WHERE id = :id");
                                   $this->prepare->bindValue(":id", $sql['id'], SQLITE3_INTEGER);
                                   $this->result = $this->prepare->execute();
@@ -806,9 +806,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                               }
                 //              break;
                           case 'tpahere':
-                              if($this->getServer()->getPlayer($sql['player_from']) instanceof Player)
+                              if($this->getServer()->getPlayerExact($sql['player_from']) instanceof Player)
                               {
-                                  $sender->teleport($this->getServer()->getPlayer($sql['player_from'])->getPosition());
+                                  $sender->teleport($this->getServer()->getPlayerExact($sql['player_from'])->getPosition());
                                   $this->prepare = $this->db2->prepare("UPDATE tp_requests SET status = 1 WHERE id = :id");
                                   $this->prepare->bindValue(":id", $sql['id'], SQLITE3_INTEGER);
                                   $this->result = $this->prepare->execute();
@@ -899,8 +899,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 							if(count($sql) > 0){
 								$sql = $sql[0];
 								if(isset($sql['world'])){
-									if(Server::getInstance()->loadWorld($sql['world']) != false){
-										$curr_world = Server::getInstance()->getWorldByName($sql['world']);
+									if(Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+										$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 										$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 										$sender->sendMessage($this->config->get("Lang_warp_to") . " " . TextFormat::GOLD . $sql['title']);
 										$sender->teleport($pos);
@@ -1039,13 +1039,13 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 if ($sender instanceof Player)
                 {
                     $this->world = $sender->getWorld()->getFolderName();
-                    foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
+                    foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                     {
                         if ($this->world == $curr_world->getFolderName())
                         {
                             $pos = $sender->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
                                 $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
-                                $pos->getWorld()->getChunk($pos->getX(),$pos->getZ(),true);
+                                $pos->getWorld()->getChunk($pos->getX(),$pos->getZ());
                                 $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                             //var_dump($pos);
@@ -1119,7 +1119,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         $sql          = $this->fetchall();
                         if( count($sql) > 0 ) {
                             $sql = $sql[0];
-                            foreach($this->getServer()->getWorlds() as $aval_world => $curr_world)
+                            foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                             {
                                 if ($sql['world'] == $curr_world->getFolderName())
                                 {
