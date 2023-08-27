@@ -1208,7 +1208,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             default:
                 return false;
             }
-            return false;
+         //   return false;
         }
 
     public function create_db(){
