@@ -53,6 +53,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     /** @var \SQLite3Stmt */
     public $prepare;
 
+    public $tpa_cooldown;
+	
     public function fetchall(){
         $row = array();
 
