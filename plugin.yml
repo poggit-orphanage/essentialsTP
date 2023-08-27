@@ -1,6 +1,6 @@
 name: essentialsTP
 main: skyss0fly\essentialsTP\essentialsTP
-version: 1.2.3
+version: 1.2.4
 api: 5.0.0
 extensions: [sqlite3]
 author: skyss0fly
