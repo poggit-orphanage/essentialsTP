@@ -1370,9 +1370,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     }
 
     public function onDisable(): void{
-        if (isset($this->prepare)){
-            $this->prepare->close();
-        }
-        $this->getLogger()->info("essentialsTP+ Disabled");
+    if($this->prepare !== null){
+        $this->prepare->close();
     }
+    $this->getLogger()->info("essentialsTP+ Disabled");
+}
 }
