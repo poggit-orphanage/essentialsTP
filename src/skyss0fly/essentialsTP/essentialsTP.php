@@ -1,11 +1,6 @@
 <?php
-/**
- * author: advocaite aka serverkart_rod
- * MONETISE YOUR POCKETMINE SERVER WITH http://serverkart.com
- * skype: advocaite
- */
 
-namespace essentialsTP;
+namespace skyss0fly\essentialsTP;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -17,13 +12,14 @@ use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\Listener;
-use pocketmine\level\Position;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
-use pocketmine\tile\Sign;
+use pocketmine\block\tile\Sign;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\Server;
 
@@ -57,6 +53,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     /** @var \SQLite3Stmt */
     public $prepare;
 
+    public $tpa_cooldown;
+	
     public function fetchall(){
         $row = array();
 
@@ -71,7 +69,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         return $row;
     }
 
-    public function onLoad(){
+    public function onLoad(): void{
 
     }
 
@@ -89,21 +87,21 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 case 'warp':
                     $this->prepare = $this->db2->prepare("UPDATE cooldowns SET warp = :time WHERE player = :name");
                     $this->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 case 'spawn':
                     $this->prepare = $this->db2->prepare("UPDATE cooldowns SET spawn = :time WHERE player = :name");
                     $this->prepare->bindValue(":name", $name, SQLITE3_TEXT);
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                    // break;
                 default:
                     return false;
             }
@@ -119,7 +117,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                //    break;
                 case 'warp':
                     $this->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, :time, 0, :name)");
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -127,7 +125,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                 //   break;
                 case 'spawn':
                     $this->prepare = $this->db2->prepare("INSERT INTO cooldowns (home, warp, spawn, player) VALUES (0, 0, :time, :name)");
                     $this->prepare->bindValue(":time", time(), SQLITE3_INTEGER);
@@ -135,7 +133,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
                     $this->result = $this->prepare->execute();
                     return true;
-                    break;
+                //    break;
                 default:
                     return false;
             }
@@ -145,10 +143,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
     public function onPlayerDeath(PlayerDeathEvent $event){
         $player = $event->getEntity();
         $this->death_loc[$player->getName()] = new Position(
-            round($player->getX()),
-            round($player->getY()),
-            round($player->getZ()),
-            $player->getLevel()
+		
+            round($player->getPosition()->getX()),
+            round($player->getPosition()->getY()),
+            round($player->getPosition()->getZ()),
+            $player->getWorld()
         );
     }
 
@@ -157,9 +156,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         {
             $player = $event->getPlayer();
             if ($player->hasPermission("essentialstp.command.bedsethome")) {
-                $this->player_cords = array('x' => (int) $player->getX(),'y' => (int) $player->getY(),'z' => (int) $player->getZ());
+                $this->player_cords = array('x' => (int) $player->getPosition()->getX(),'y' => (int) $player->getPosition()->getY(),'z' => (int) $player->getPosition()->getZ());
                 $this->username = $player->getName();
-                $this->world = $player->getLevel()->getName();
+                $this->world = $player->getWorld()->getFolderName();
                 $this->home_loc = "bed";
                 $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                 $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -199,17 +198,17 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 		if ($event->isCancelled()) return true;
 		$player = $event->getPlayer();
         $block  = $event->getBlock();
-        $tile = $block->getLevel()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        $tile = $block->getPosition()->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
         if($tile instanceof Sign) {
             $text    = $tile->getText();
 
             if(strtolower($text[0]) === "[warp]"){
                 if (!$player->hasPermission("essentialstp.command.sign.warp")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->setCancelled(true);
+                $event->cancel();
                 $this->prepare = $this->db2->prepare("SELECT home,warp,spawn,player FROM cooldowns WHERE player =:name AND warp < :time");
                 $this->prepare->bindValue(":name", $player->getName(), SQLITE3_TEXT);
                 $this->prepare->bindValue(":time", ( time() - $this->config->get("tp-warp-cooldown")), SQLITE3_TEXT);
@@ -224,8 +223,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
 							if(isset($sql['world'])){
-								if(Server::getInstance()->loadLevel($sql['world']) != false){
-									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+								if(Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$player->teleport($pos);
 									$this->update_cooldown($player->getName(), time(), 'warp');
@@ -250,23 +249,23 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif((strtolower($text[0]) === "[wild]")){
                 if (!$player->hasPermission("essentialstp.command.sign.wild")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->setCancelled(true);
-                $this->world = $player->getLevel()->getName();
-                foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                $event->cancel();
+                $this->world = $player->getWorld()->getFolderName();
+                foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
-                    if ($this->world == $curr_world->getName())
+                    if ($this->world == $curr_world->getFolderName())
                     {
-                        $pos = $player->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
-                        $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
-                        $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                        $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                        $pos = $player->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                        $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
+                        $pos->getWorld()->getChunk($pos->getX(),$pos->getZ());
+                        $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
-                        if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
+                        if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
                         {
-                            $player->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                            $player->teleport($pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
                             $player->sendMessage($this->config->get("Lang_teleport_wild"));
                             return true;
                         }
@@ -281,26 +280,26 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif(strtolower($text[0]) === "[spawn]"){
                 if (!$player->hasPermission("essentialstp.command.sign.spawn")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }
-                $event->setCancelled(true);
+                $event->cancel();
                 $this->prepare = $this->db2->prepare("SELECT home,warp,spawn,player FROM cooldowns WHERE player =:name AND spawn < :time");
                 $this->prepare->bindValue(":name", $player->getName(), SQLITE3_TEXT);
                 $this->prepare->bindValue(":time", ( time() - $this->config->get("tp-spawn-cooldown")), SQLITE3_TEXT);
                 $this->result = $this->prepare->execute();
                 $cool_sql          = $this->fetchall();
                 if (count($cool_sql) > 0){
-                    $this->world = $player->getLevel()->getName();
+                    $this->world = $player->getWorld()->getFolderName();
                     $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                     $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                     $this->result = $this->prepare->execute();
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                        foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
-                            if ($sql['world'] == $curr_world->getName())
+                            if ($sql['world'] == $curr_world->getFolderName())
                             {
                                 $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 
@@ -315,7 +314,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     else
                     {
                         $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                        $player->teleport($player->getLevel()->getSpawnLocation());
+                        $player->teleport($player->getWorld()->getSpawnLocation());
                         $this->update_cooldown($player->getName(), time(), 'spawn');
                         $player->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                         return true;
@@ -336,14 +335,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $player = $event->getPlayer();
         $block  = $event->getBlock();
         //check tile above is not sign as breaking it will break sign
-        $tile_above = $block->getLevel()->getTile(new Vector3($block->getFloorX(), ($block->getFloorY()+1), $block->getFloorZ()));
+        $tile_above = $block->getPosition()->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), ($block->getPosition()->getFloorY()+1), $block->getPosition()->getFloorZ()));
         if($tile_above instanceof Sign) {
             $text = $tile_above->getText();
 
             if(strtolower($text[0]) === "[warp]"){
                 if (!$player->hasPermission("essentialstp.command.sign.warp.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -351,7 +350,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif (strtolower($text[0]) === "[wild]"){
                 if (!$player->hasPermission("essentialstp.command.sign.wild.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -359,7 +358,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }elseif (strtolower($text[0]) === "[spawn]"){
                 if (!$player->hasPermission("essentialstp.command.sign.spawn.break")) {
                     $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                    $event->setCancelled(true);
+                    $event->cancel();
                     return true;
                 }else{
                     return true;
@@ -368,14 +367,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
 
         //normal tile
-        $tile = $block->getLevel()->getTile(new Vector3($block->getFloorX(), $block->getFloorY(), $block->getFloorZ()));
+        $tile = $block->getPosition()->getWorld()->getTile(new Vector3($block->getPosition()->getFloorX(), $block->getPosition()->getFloorY(), $block->getPosition()->getFloorZ()));
             if ($tile instanceof Sign) {
                 $text = $tile->getText();
 
                 if (strtolower($text[0]) === "[warp]") {
                     if (!$player->hasPermission("essentialstp.command.sign.warp.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
@@ -383,7 +382,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 } elseif (strtolower($text[0]) === "[wild]") {
                     if (!$player->hasPermission("essentialstp.command.sign.wild.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
@@ -391,7 +390,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 } elseif (strtolower($text[0]) === "[spawn]") {
                     if (!$player->hasPermission("essentialstp.command.sign.spawn.break")) {
                         $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                        $event->setCancelled(true);
+                        $event->cancel();
                         return true;
                     } else {
                         return true;
@@ -407,14 +406,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 		if ($event->isCancelled()) return true;
         $player = $event->getPlayer();
 
-        if(strtolower($event->getLine(0)) === "[warp]"){
+        if(strtolower($event->getNewText()->getLine(0)) === "[warp]"){
             if (!$player->hasPermission("essentialstp.command.sign.warp.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 // lets check warp exist first if not don't allow change
-                $this->warp_loc = $event->getLine(1);
+                $this->warp_loc = $event->getNewText()->getLine(1);
                 $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                 $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
                 $this->result = $this->prepare->execute();
@@ -424,18 +423,18 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 return true;
             }
-        }elseif(strtolower($event->getLine(0)) === "[wild]"){
+        }elseif(strtolower($event->getNewText()->getLine(0)) === "[wild]"){
             if (!$player->hasPermission("essentialstp.command.sign.wild.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 return true;
             }
-        }elseif(strtolower($event->getLine(0)) === "[spawn]"){
+        }elseif(strtolower($event->getNewText()->getLine(0)) === "[spawn]"){
             if (!$player->hasPermission("essentialstp.command.sign.spawn.create")) {
                 $player->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return true;
             }else{
                 return true;
@@ -454,9 +453,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             $sql = $this->fetchall();
             if (count($sql) > 0){
                 $sql = $sql[0];
-                foreach($player->getServer()->getLevels() as $aval_world => $curr_world)
+                foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                 {
-                    if ($sql['world'] == $curr_world->getName())
+                    if ($sql['world'] == $curr_world->getFolderName())
                     {
                         $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                         $this->update_cooldown($this->username, time(), 'home');
@@ -467,16 +466,16 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             }
             else
             {
-                    $this->world = $player->getLevel()->getName();
+                    $this->world = $player->getWorld()->getFolderName();
                     $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                     $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                     $this->result = $this->prepare->execute();
                     $sql          = $this->fetchall();
                     if( count($sql) > 0 ) {
                         $sql = $sql[0];
-                        foreach($player->getServer()->getLevels() as $aval_world => $curr_world)
+                        foreach($player->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                         {
-                            if ($sql['world'] == $curr_world->getName())
+                            if ($sql['world'] == $curr_world->getFolderName())
                             {
                                 $event->setRespawnPosition(new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world));
                                 $this->update_cooldown($player->getName(), time(), 'spawn');
@@ -489,7 +488,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     else
                     {
                         $player->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                        $event->setRespawnPosition($player->getLevel()->getSpawnLocation());
+                        $event->setRespawnPosition($player->getWorld()->getSpawnLocation());
                         $this->update_cooldown($player->getName(), time(), 'spawn');
                         $player->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                         return true;
@@ -512,7 +511,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
             case 'motd':
                 $sender->sendMessage(TextFormat::GOLD.'[MOTD] '.TextFormat::WHITE.$this->config->get("MOTD"));
                 return true;
-                break;
+              //  break;
             case 'home':
                 if ($sender instanceof Player)
                 {
@@ -557,8 +556,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             $sql = $this->fetchall();
                             if( count($sql) > 0 ) {
 								$sql = $sql[0];
-								if(isset($sql['world']) && Server::getInstance()->loadLevel($sql['world']) != false){
-									$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+								if(isset($sql['world']) && Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+									$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 									$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 									$sender->teleport($pos);
 									$this->update_cooldown($this->username, time(), 'home');
@@ -587,7 +586,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             case 'sethome':
                 if ($sender instanceof Player)
                 {
@@ -597,9 +596,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     }
                     if((count($args) != 0) && (count($args) < 2))
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
                         $this->username = $sender->getName();
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->home_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT player,title,x,y,z,world FROM homes WHERE player = :name AND title = :title");
                         $this->prepare->bindValue(":name", $this->username, SQLITE3_TEXT);
@@ -644,7 +643,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'delhome':
                 if ($sender instanceof Player)
                 {
@@ -687,7 +686,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+          //      break;
             case 'tpa':
                 if (!$sender->hasPermission("essentialstp.command.tpa")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -702,13 +701,13 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             }
                             $this->tp_sender  = $sender->getName();
                             $this->tp_reciver = $args[0];
-                            if ($this->getServer()->getPlayer($this->tp_reciver) instanceof Player) {
-                                $this->getServer()->getPlayer($this->tp_reciver)->sendMessage(TextFormat::GOLD . $this->tp_sender . TextFormat::WHITE . ' '.$this->config->get("Lang_sent_request_you"));
-                                $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' ' . TextFormat::GOLD . '/tpaccept' . TextFormat::WHITE . ' '.$this->config->get("Lang_accept_request"));
-                                $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' ' . TextFormat::GOLD . '/tpdecline' . TextFormat::WHITE . ' '.$this->config->get("Lang_decline_request"));
-                                $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_request_expire_1").' ' . TextFormat::GOLD .$this->config->get("tpa-here-cooldown").' '.$this->config->get("Lang_request_expire_2") . TextFormat::WHITE . ' '.$this->config->get("Lang_request_expire_3"));
+                            if ($this->getServer()->getPlayerExact($this->tp_reciver) instanceof Player) {
+                                $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage(TextFormat::GOLD . $this->tp_sender . TextFormat::WHITE . ' '.$this->config->get("Lang_sent_request_you"));
+                                $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' ' . TextFormat::GOLD . '/tpaccept' . TextFormat::WHITE . ' '.$this->config->get("Lang_accept_request"));
+                                $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' ' . TextFormat::GOLD . '/tpdecline' . TextFormat::WHITE . ' '.$this->config->get("Lang_decline_request"));
+                                $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_request_expire_1").' ' . TextFormat::GOLD .$this->config->get("tpa-here-cooldown").' '.$this->config->get("Lang_request_expire_2") . TextFormat::WHITE . ' '.$this->config->get("Lang_request_expire_3"));
                                 $this->prepare = $this->db2->prepare("INSERT INTO tp_requests (player, player_from, type, time, status) VALUES (:name, :name_from, :type, :time, :status)");
-                                $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayer($this->tp_reciver)->getName())), SQLITE3_TEXT);
+                                $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayerExact($this->tp_reciver)->getName())), SQLITE3_TEXT);
                                 $this->prepare->bindValue(":name_from", trim(strtolower($this->tp_sender)), SQLITE3_TEXT);
                                 $this->prepare->bindValue(":type", 'tpa', SQLITE3_TEXT);
                                 $this->prepare->bindValue(":time", time(), SQLITE3_TEXT);
@@ -730,7 +729,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+         //       break;
             case 'tpahere':
                 if (!$sender->hasPermission("essentialstp.command.tpahere")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -743,14 +742,14 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         if(trim(strtolower($sender->getName())) == trim(strtolower($args[0]))){$sender->sendMessage(TextFormat::RED.$this->config->get("Lang_no_teleport_self"));return true;}
                         $this->tp_sender = $sender->getName();
                         $this->tp_reciver = $args[0];
-                        if($this->getServer()->getPlayer($this->tp_reciver) instanceof Player)
+                        if($this->getServer()->getPlayerExact($this->tp_reciver) instanceof Player)
                         {
-                            $this->getServer()->getPlayer($this->tp_reciver)->sendMessage(TextFormat::GOLD.$this->tp_sender.TextFormat::WHITE.' '.$this->config->get("Lang_sent_request_them"));
-                            $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' '.TextFormat::GOLD.'/tpaccept'.TextFormat::WHITE.' '.$this->config->get("Lang_accept_request"));
-                            $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' '.TextFormat::GOLD.'/tpdecline'.TextFormat::WHITE.' '.$this->config->get("Lang_decline_request"));
-                            $this->getServer()->getPlayer($this->tp_reciver)->sendMessage($this->config->get("Lang_request_expire_1").' '.TextFormat::GOLD.$this->config->get("tpa-here-cooldown").' '.$this->config->get("Lang_request_expire_2").TextFormat::WHITE.' '.$this->config->get("Lang_request_expire_3"));
+                            $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage(TextFormat::GOLD.$this->tp_sender.TextFormat::WHITE.' '.$this->config->get("Lang_sent_request_them"));
+                            $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' '.TextFormat::GOLD.'/tpaccept'.TextFormat::WHITE.' '.$this->config->get("Lang_accept_request"));
+                            $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_type").' '.TextFormat::GOLD.'/tpdecline'.TextFormat::WHITE.' '.$this->config->get("Lang_decline_request"));
+                            $this->getServer()->getPlayerExact($this->tp_reciver)->sendMessage($this->config->get("Lang_request_expire_1").' '.TextFormat::GOLD.$this->config->get("tpa-here-cooldown").' '.$this->config->get("Lang_request_expire_2").TextFormat::WHITE.' '.$this->config->get("Lang_request_expire_3"));
                             $this->prepare = $this->db2->prepare("INSERT INTO tp_requests (player, player_from, type, time, status) VALUES (:name, :name_from, :type, :time, :status)");
-                            $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayer($this->tp_reciver)->getName())), SQLITE3_TEXT);
+                            $this->prepare->bindValue(":name", trim(strtolower($this->getServer()->getPlayerExact($this->tp_reciver)->getName())), SQLITE3_TEXT);
                             $this->prepare->bindValue(":name_from", trim(strtolower($this->tp_sender)), SQLITE3_TEXT);
                             $this->prepare->bindValue(":type", 'tpahere', SQLITE3_TEXT);
                             $this->prepare->bindValue(":time", time(), SQLITE3_TEXT);
@@ -775,7 +774,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'tpaccept':
                 if (!$sender->hasPermission("essentialstp.command.tpaccept")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -794,9 +793,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                       switch($sql['type'])
                       {
                           case 'tpa':
-                              if($this->getServer()->getPlayer($sql['player_from']) instanceof Player)
+                              if($this->getServer()->getPlayerExact($sql['player_from']) instanceof Player)
                               {
-                                  $this->getServer()->getPlayer($sql['player_from'])->teleport($sender->getPosition());
+                                  $this->getServer()->getPlayerExact($sql['player_from'])->teleport($sender->getPosition());
                                   $this->prepare = $this->db2->prepare("UPDATE tp_requests SET status = 1 WHERE id = :id");
                                   $this->prepare->bindValue(":id", $sql['id'], SQLITE3_INTEGER);
                                   $this->result = $this->prepare->execute();
@@ -807,11 +806,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                                   $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
+                //              break;
                           case 'tpahere':
-                              if($this->getServer()->getPlayer($sql['player_from']) instanceof Player)
+                              if($this->getServer()->getPlayerExact($sql['player_from']) instanceof Player)
                               {
-                                  $sender->teleport($this->getServer()->getPlayer($sql['player_from'])->getPosition());
+                                  $sender->teleport($this->getServer()->getPlayerExact($sql['player_from'])->getPosition());
                                   $this->prepare = $this->db2->prepare("UPDATE tp_requests SET status = 1 WHERE id = :id");
                                   $this->prepare->bindValue(":id", $sql['id'], SQLITE3_INTEGER);
                                   $this->result = $this->prepare->execute();
@@ -822,7 +821,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                                   $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_player_not_online"));
                                   return true;
                               }
-                              break;
+                //              break;
                           default:
                               return false;
                       }
@@ -842,7 +841,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'tpdeny':
                 if (!$sender->hasPermission("essentialstp.command.tpdeny")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -861,7 +860,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             case 'warp':
                 if (!$sender->hasPermission("essentialstp.command.warp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -902,8 +901,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 							if(count($sql) > 0){
 								$sql = $sql[0];
 								if(isset($sql['world'])){
-									if(Server::getInstance()->loadLevel($sql['world']) != false){
-										$curr_world = Server::getInstance()->getLevelByName($sql['world']);
+									if(Server::getInstance()->getWorldManager()->loadWorld($sql['world']) != false){
+										$curr_world = Server::getInstance()->getWorldManager()->getWorldByName($sql['world']);
 										$pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 										$sender->sendMessage($this->config->get("Lang_warp_to") . " " . TextFormat::GOLD . $sql['title']);
 										$sender->teleport($pos);
@@ -932,23 +931,25 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'setwarp':
-                if (!$sender->hasPermission("essentialstp.command.setwarp")) {
+             /*   if (!$sender->hasPermission("essentialstp.command.setwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
                     return true;
                 }
+		*/
                 if ($sender instanceof Player)
                 {
-                    if (!$sender->hasPermission("essentialstp.command.setwarp")) {
+                     if (!$sender->hasPermission("essentialstp.command.setwarp")) {
                         $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
                         return true;
                     }
+			
 
                     if((count($args) != 0) && (count($args) < 2))
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getLevel()->getName();
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->warp_loc = $args[0];
                         $this->prepare = $this->db2->prepare("SELECT title,x,y,z,world FROM warps WHERE title = :title");
                         $this->prepare->bindValue(":title", $this->warp_loc, SQLITE3_TEXT);
@@ -992,7 +993,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+              //  break;
             case 'delwarp':
                 if (!$sender->hasPermission("essentialstp.command.delwarp")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1033,7 +1034,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+              //  break;
             case 'wild':
                 if (!$sender->hasPermission("essentialstp.command.wild")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1041,15 +1042,15 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 }
                 if ($sender instanceof Player)
                 {
-                    $this->world = $sender->getLevel()->getName();
-                    foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                    $this->world = $sender->getWorld()->getFolderName();
+                    foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                     {
-                        if ($this->world == $curr_world->getName())
+                        if ($this->world == $curr_world->getFolderName())
                         {
-                            $pos = $sender->getLevel()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
-                                $pos->getLevel()->loadChunk($pos->getX(),$pos->getZ());
-                                $pos->getLevel()->getChunk($pos->getX(),$pos->getZ(),true);
-                                $pos = $pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
+                            $pos = $sender->getWorld()->getSafeSpawn(new Vector3(rand('-'.$this->config->get("wild-MaxX"), $this->config->get("wild-MaxX")),rand(70,100),rand('-'.$this->config->get("wild-MaxY"), $this->config->get("wild-MaxY"))));
+                                $pos->getWorld()->loadChunk($pos->getX(),$pos->getZ());
+                                $pos->getWorld()->getChunk($pos->getX(),$pos->getZ());
+                                $pos = $pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ()));
 
                             //var_dump($pos);
                             //var_dump($pos->getLevel()->isChunkGenerated($pos->getX(),$pos->getZ()));
@@ -1057,9 +1058,9 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                             //var_dump($pos->getLevel()->isChunkPopulated($pos->getX(),$pos->getZ()));
                             //$sender->getLevel()->loadChunk($pos->getX(),$pos->getZ());
 
-                            if($pos->getLevel()->isChunkLoaded($pos->getX(),$pos->getZ()))
+                            if($pos->getWorld()->isChunkLoaded($pos->getX(),$pos->getZ()))
                             {
-                                $sender->teleport($pos->getLevel()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
+                                $sender->teleport($pos->getWorld()->getSafeSpawn(new Vector3($pos->getX(),rand(4,100),$pos->getZ())));
                                 $sender->sendMessage($this->config->get("Lang_teleport_wild"));
                                 return true;
                             }
@@ -1078,7 +1079,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+           //     break;
             case 'back':
                 if (!$sender->hasPermission("essentialstp.command.back")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1101,7 +1102,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+            //    break;
             case 'spawn':
                 if (!$sender->hasPermission("essentialstp.command.spawn")) {
                     $sender->sendMessage(TextFormat::RED . $this->config->get("Lang_no_permissions"));
@@ -1115,16 +1116,16 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $this->result = $this->prepare->execute();
                     $cool_sql          = $this->fetchall();
                     if (count($cool_sql) > 0){
-                        $this->world = $sender->getLevel()->getName();
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
                         $sql          = $this->fetchall();
                         if( count($sql) > 0 ) {
                             $sql = $sql[0];
-                            foreach($this->getServer()->getLevels() as $aval_world => $curr_world)
+                            foreach($this->getServer()->getWorldManager()->getWorlds() as $aval_world => $curr_world)
                             {
-                                if ($sql['world'] == $curr_world->getName())
+                                if ($sql['world'] == $curr_world->getFolderName())
                                 {
                                     $pos = new Position((int) $sql['x'], (int) $sql['y'], (int) $sql['z'], $curr_world);
 
@@ -1139,7 +1140,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                         else
                         {
                             $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_no_spawn_set"));
-                            $sender->teleport($sender->getLevel()->getSpawnLocation());
+                            $sender->teleport($sender->getWorld()->getSpawnLocation());
                             $this->update_cooldown($sender->getName(), time(), 'spawn');
                             $sender->sendMessage($this->config->get("Lang_teleport_spawn_original"));
                             return true;
@@ -1156,7 +1157,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+          //      break;
             case 'setspawn':
                 if (!$sender->hasPermission("essentialstp.command.setspawn")) {
                     $sender->sendMessage(TextFormat::RED .$this->config->get("Lang_no_permissions"));
@@ -1166,8 +1167,8 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                 {
                     if(count($args) == 0)
                     {
-                        $this->player_cords = array('x' => (int) $sender->getX(),'y' => (int) $sender->getY(),'z' => (int) $sender->getZ());
-                        $this->world = $sender->getLevel()->getName();
+                        $this->player_cords = array('x' => (int) $sender->getPosition()->getX(),'y' => (int) $sender->getPosition()->getY(),'z' => (int) $sender->getPosition()->getZ());
+                        $this->world = $sender->getWorld()->getFolderName();
                         $this->prepare = $this->db2->prepare("SELECT x,y,z,world FROM spawns WHERE world = :world");
                         $this->prepare->bindValue(":world", $this->world, SQLITE3_TEXT);
                         $this->result = $this->prepare->execute();
@@ -1205,11 +1206,11 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
                     $sender->sendMessage(TextFormat::RED.$this->config->get("Lang_command_only_use_ingame"));
                     return true;
                 }
-                break;
+             //   break;
             default:
                 return false;
             }
-            return false;
+         //   return false;
         }
 
     public function create_db(){
@@ -1326,7 +1327,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         }
         if($this->config->get("MOTD") == false)
         {
-            $this->config->set("MOTD", "EssintialsTP+ Welcomes you please change this motd in config");
+            $this->config->set("MOTD", "EssentialsTP+ Welcomes you please change this motd in config");
             $this->config->save();
         }
         if($this->config->get("wild-MaxX") == false)
@@ -1343,7 +1344,7 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
 
     }
 
-    public function onEnable(){
+    public function onEnable(): void{
         $this->getLogger()->info(TextFormat::GREEN."essentialsTP+ loading...");
         @mkdir($this->getDataFolder());
         $this->check_config();
@@ -1368,10 +1369,10 @@ class essentialsTP extends PluginBase  implements CommandExecutor, Listener {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    public function onDisable(){
-        if($this->prepare){
-            $this->prepare->close();
-        }
-        $this->getLogger()->info("essentialsTP+ Disabled");
+    public function onDisable(): void{
+    if($this->prepare !== null){
+        $this->prepare->close();
     }
+    $this->getLogger()->info("essentialsTP+ Disabled");
+}
 }
